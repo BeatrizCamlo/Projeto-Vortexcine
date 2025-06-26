@@ -27,17 +27,20 @@ class Ingresso {
 
 class RepositorioClientes {
   -List<Cliente> clientesCadastrados
+  -HashMap<String, Cliente> clientePorEmail
 
   +adicionarCliente()
   +removerCliente()
   +modificarNomeCliente()
   +modificarEmailCliente()
   +modificarSenhaCliente()
-  +buscarClienteId()
+  +obterClientePorId()
+  +obterTodosClientes()
 }
 
 class RepositorioFuncionario {
   -List<Funcionario> funcionariosAtivos
+  -HashMap<String, Funcionario> funcionariosPorEmail
 
   +adicionarFuncionario()
   +removerFuncionario()
@@ -45,6 +48,7 @@ class RepositorioFuncionario {
   +modificarEmailFuncionario()
   +modificarSenhaFuncionario()
   +buscarFuncionarioId()
+  +obterTodosFuncionarios()
 }
 
 class Filme {
@@ -61,7 +65,9 @@ class RepositorioFilmes {
   +modificarNomeFilme()
   +modificarDuracaoFilme()
   +modificarGeneroFilme()
-  +buscarFilmeId()
+  +obterFilmePorId()
+  +obterTodosFilmes()
+
 }
 
 class Assento {
@@ -70,6 +76,13 @@ class Assento {
 
 class RepositorioAssentos {
   -HashMap<Cliente, Assento> assentosOcupados
+
+  +ocuparAssento()
+  +isAssentoOcupado()
+  +desocuparAssento()
+  +limparTodosAssentos()
+  +getAssentosOcupados()
+
 }
 
 class Coordenada {
@@ -83,6 +96,16 @@ class Sessao {
   -String data
 }
 
+class RepositorioSessao{
+  -private List<Sessao> sessoesDisponiveis;
+  -private HashMap<String, Sessao> sessoesPorFilme;
+
+  +adicionarSessao()
+  +modificarSalaSessao()
+  +modificarFilmeSessao()
+  +modificarDataSessao()
+}
+
 class Sala {
   -String numeracao
   -List<Assento> assentos
@@ -92,6 +115,9 @@ class Sala {
 class RepositorioSalas {
   -List<Sala> salasTotais
   -HashMap<Sessao, Sala> salasOcupadas
+
+  +ocuparSalaComSessao()
+  +buscarSalaPorSessao()
 }
 
 
