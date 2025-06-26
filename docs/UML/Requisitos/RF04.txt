@@ -1,0 +1,1 @@
+RF04: O sistema deve permitir que clientes escolham uma sessão e visualizem os assentos disponíveis.

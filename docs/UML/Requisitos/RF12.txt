@@ -1,0 +1,1 @@
+RF12: O sistema deve permitir que funcionários consultem os clientes que compraram ingresso para uma sessão.

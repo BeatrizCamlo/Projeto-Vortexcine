@@ -1,0 +1,1 @@
+RF07: O sistema deve permitir que clientes visualizem seus ingressos comprados.

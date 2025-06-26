@@ -1,0 +1,1 @@
+RF03: O sistema deve permitir que clientes visualizem filmes disponíveis.

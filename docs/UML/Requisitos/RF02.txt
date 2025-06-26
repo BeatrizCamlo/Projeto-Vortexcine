@@ -1,0 +1,1 @@
+RF02: O sistema deve permitir que clientes façam login com e-mail e senha.

@@ -1,0 +1,1 @@
+RF11: O sistema deve permitir que funcionários gerenciem salas e assentos.

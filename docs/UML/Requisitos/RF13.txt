@@ -1,0 +1,1 @@
+RF13: O sistema deve permitir que gerentes adicionem e removam funcionários.

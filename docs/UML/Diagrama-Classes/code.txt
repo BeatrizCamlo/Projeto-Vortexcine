@@ -1,0 +1,120 @@
+classDiagram
+
+class Pessoa {
+  -int id
+  -String nome
+  -String email
+  -String senha
+
+  +getNome()
+  +getEmail()
+  +getSenha()
+}
+
+class Cliente {
+  -Ingresso ingresso
+}
+
+class Funcionario {
+  -boolean ehGerente
+}
+
+class Ingresso {
+  -Sessao sessao
+  -Assento assento
+  -double preco
+}
+
+class RepositorioClientes {
+  -List<Cliente> clientesCadastrados
+
+  +adicionarCliente()
+  +removerCliente()
+  +modificarNomeCliente()
+  +modificarEmailCliente()
+  +modificarSenhaCliente()
+  +buscarClienteId()
+}
+
+class RepositorioFuncionario {
+  -List<Funcionario> funcionariosAtivos
+
+  +adicionarFuncionario()
+  +removerFuncionario()
+  +modificarNomeFuncionario()
+  +modificarEmailFuncionario()
+  +modificarSenhaFuncionario()
+  +buscarFuncionarioId()
+}
+
+class Filme {
+  -String nome
+  -int duracaoEmMinutos
+  -Enum genero
+}
+
+class RepositorioFilmes {
+  -List<Filme> filmesCadastrados
+
+  +adicionarFilmes()
+  +removerFilmes()
+  +modificarNomeFilme()
+  +modificarDuracaoFilme()
+  +modificarGeneroFilme()
+  +buscarFilmeId()
+}
+
+class Assento {
+  -Coordenada coordenada
+}
+
+class RepositorioAssentos {
+  -HashMap<Cliente, Assento> assentosOcupados
+}
+
+class Coordenada {
+  -String coordenada
+}
+
+class Sessao {
+  -Filme filmeReproduzido
+  -Sala sala
+  -List<Cliente> publico
+  -String data
+}
+
+class Sala {
+  -String numeracao
+  -List<Assento> assentos
+  -List<Sessao> sessoes
+}
+
+class RepositorioSalas {
+  -List<Sala> salasTotais
+  -HashMap<Sessao, Sala> salasOcupadas
+}
+
+
+Pessoa <|-- Cliente
+Pessoa <|-- Funcionario
+
+Cliente --> Ingresso
+Ingresso --> Sessao
+Ingresso --> Assento
+
+RepositorioClientes --> Cliente
+RepositorioFuncionario --> Funcionario
+RepositorioFilmes --> Filme
+RepositorioAssentos --> Assento
+RepositorioAssentos --> Cliente
+RepositorioSalas --> Sala
+RepositorioSalas --> Sessao
+
+Assento --> Coordenada
+
+Sessao --> Filme
+Sessao --> Sala
+Sessao --> Cliente
+
+Sala --> Assento
+Sala --> Sessao
