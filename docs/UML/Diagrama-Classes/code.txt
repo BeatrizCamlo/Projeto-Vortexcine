@@ -120,6 +120,30 @@ class RepositorioSalas {
   +buscarSalaPorSessao()
 }
 
+class Painel de Controle(){
+  -RepositorioSessao repositorioSessoes
+  -RepositorioClientes repositorioClientes
+  -RepositorioFilmes repositorioFilmes
+  -RepositorioFuncionario repositorioFuncionario
+  -RepositorioSalas RepositorioSalas
+
+  +mostrarRecepcao() 
+  +loginTipoUsuario() // Mostrar interface de escolha se o fluxo de sistema será para Cliente ou Funcionario.
+  +processarEscolhaUsuario() // Processar entrada anterior.
+  +loginFuncionario() // Funcionario insere seu email e senha.
+  +menuFuncionario() // Funcionario escolhe opcoes para CRUD de filmes. Em caso de Gerente, aparece a opção de CRUD de clientes e funcionarios. Ambos tem a opção de deslogar
+  +cadastrarFilme() // MENU FUNCIONARIO
+  +atualizarFilme() // MENU FUNCIONARIO
+  +visualizarFilmes() // MENU FUNCIONARIO
+  +deletarFilmes() // MENU FUNCIONARIO
+  +loginCliente() // Cliente insere seu email e senha.
+  +menuCliente() // Cliente escolhe opcoes comprar ingresso, visualizar ingressos comprados e deslogar.
+  +mostrarFilmesEmCartaz // Mostra as sessoes disponíveis assim que o Cliente consegue logar.
+  +comprarIngresso() // MENU CLIENTE
+  +mostarAssentos() // Matriz para representar a sala de cinema e seus assentos.  
+  +atualizarAssentos() // Adicionar as coordenadas do assento escolhidas pelo Cliente 
+}
+
 
 Pessoa <|-- Cliente
 Pessoa <|-- Funcionario
