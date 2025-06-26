@@ -5,6 +5,7 @@ import java.util.List;
 
 import entities.Filme;
 import entities.Funcionario;
+import entities.GeneroFilme;
 
 public class RepositorioFilmes {
     private List<Filme> filmes;
@@ -23,14 +24,15 @@ public class RepositorioFilmes {
         filmes.add(filme);
     }
 
-    public Filme obterFilmePorId(int id) {
+    public Filme obterFilmePorNome(String nome) {
         for (Filme filme : filmes) {
-            if (filme.getId() == id) {
+            if (filme.getNome().equalsIgnoreCase(nome)) {
                 return filme;
             }
         }
         return null;
     }
+
     public List<Filme> obterTodosFilmes() {
         return new ArrayList<>(filmes);
     }
@@ -71,14 +73,14 @@ public class RepositorioFilmes {
         if (!filmes.contains(filme)) {
             throw new IllegalArgumentException("Filme não encontrado.");
         }
-        filme.setDuracao(novaDuracao);
+        filme.setDuracaoEmMinutos(novaDuracao);
     }
 
-    public void modificarGeneroFilme(Funcionario funcionario, Filme filme, String novoGenero) {
+    public void modificarGeneroFilme(Funcionario funcionario, Filme filme, GeneroFilme novoGenero) {
         if(!funcionario.ehGerente()){
             throw new IllegalArgumentException("Apenas gerentes podem modificar filmes.");
         }
-        if (filme == null || novoGenero == null || novoGenero.isEmpty()) {
+        if (filme == null || novoGenero == null || novoGenero.toString().isEmpty()) {
             throw new IllegalArgumentException("Filme ou gênero não podem ser nulos ou vazios.");
         }
         if (!filmes.contains(filme)) {

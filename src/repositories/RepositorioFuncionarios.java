@@ -19,9 +19,6 @@ public class RepositorioFuncionarios {
         if (!funcionario.ehGerente()) {
             throw new IllegalArgumentException("Apenas gerentes podem adicionar funcionários.");
         }
-        if (funcionario == null) {
-            throw new IllegalArgumentException("Funcionário não pode ser nulo.");
-        }
         if (funcionariosAtivos.contains(funcionario)) {
             throw new IllegalArgumentException("Funcionário já cadastrado.");
         }
@@ -86,9 +83,6 @@ public class RepositorioFuncionarios {
     public void removerFuncionario(Funcionario funcionario) {
         if(!funcionario.ehGerente()){
             throw new IllegalArgumentException("Apenas gerentes podem remover funcionários.");
-        }
-        if (funcionario == null) {
-            throw new IllegalArgumentException("Funcionário não pode ser nulo.");
         }
         if (!funcionariosAtivos.contains(funcionario)) {
             throw new IllegalArgumentException("Funcionário não encontrado.");

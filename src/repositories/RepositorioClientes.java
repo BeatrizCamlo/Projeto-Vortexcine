@@ -23,7 +23,7 @@ public class RepositorioClientes {
         if (clientes.contains(cliente)) {
             throw new IllegalArgumentException("Cliente já cadastrado.");
         }
-        if (clientesPorEmail.containsKey(cliente.getEmail()){
+        if (clientesPorEmail.containsKey(cliente.getEmail())){
             throw new IllegalArgumentException("Já existe um cliente cadastrado com este email.");
         }
         clientes.add(cliente);
@@ -31,7 +31,7 @@ public class RepositorioClientes {
 
     public Cliente obterClientePorId(int id) {
         for (Cliente cliente : clientes) {
-            if (cliente.getId().equals(id)) {
+            if (cliente.getId() == id) {
                 return cliente;
             }
         }

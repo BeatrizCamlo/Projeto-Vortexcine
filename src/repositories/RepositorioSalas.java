@@ -3,13 +3,13 @@ package repositories;
 import java.util.HashMap;
 import java.util.List;
 
-import entities.Funcionario;
 import entities.Sala;
 import entities.Sessao;
 
 public class RepositorioSalas {
     private List<Sala> salasTotais;
     private HashMap<Sessao, Sala> salasPorSessao;
+
 
     public RepositorioSalas(List<Sala> salasTotais, HashMap<Sessao, Sala> salasPorSessao) {
         this.salasTotais = salasTotais;
@@ -23,8 +23,8 @@ public class RepositorioSalas {
         if (!salasTotais.contains(sala)) {
             throw new IllegalArgumentException("Sala não encontrada.");
         }
-        if (!salasPorSessao.containsKey(sessao.getHorarios())) {
-            salasPorSessao.put(sessao.getHorarios(), List.of(sala));
+        if (!salasPorSessao.containsKey(sessao)) {
+            salasPorSessao.put(sessao, sala);
         } else {
            throw new IllegalArgumentException("Sessão já está ocupada em outra sala.");
         }
@@ -34,7 +34,7 @@ public class RepositorioSalas {
         if (sessao == null) {
             throw new IllegalArgumentException("Sessão não pode ser nula.");
         }
-        return salasPorSessao.get(sessao.getFilme.getNome());
+        return  salasPorSessao.get(sessao);
     }
     
 }

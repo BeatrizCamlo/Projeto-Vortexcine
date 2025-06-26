@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import entities.Filme;
+import entities.Sala;
 import entities.Sessao;
 
 public class RepositorioSessao {
@@ -29,8 +31,8 @@ public class RepositorioSessao {
         sessoesPorFilme.put(sessao.getFilme().getNome(), sessao);
     }
 
-    public void modificarSalaSessao(Sessao sessao, String novaSala) {
-        if (sessao == null || novaSala == null || novaSala.isEmpty()) {
+    public void modificarSalaSessao(Sessao sessao, Sala novaSala) {
+        if (sessao == null || novaSala == null) {
             throw new IllegalArgumentException("Sessão ou sala não podem ser nulos ou vazios.");
         }
         if (!sessoesDisponiveis.contains(sessao)) {
@@ -39,8 +41,8 @@ public class RepositorioSessao {
         sessao.setSala(novaSala);
     }
 
-    public void modificarFilmeSessao(Sessao sessao, String novoFilme) {
-        if (sessao == null || novoFilme == null || novoFilme.isEmpty()) {
+    public void modificarFilmeSessao(Sessao sessao, Filme novoFilme) {
+        if (sessao == null || novoFilme == null) {
             throw new IllegalArgumentException("Sessão ou filme não podem ser nulos ou vazios.");
         }
         if (!sessoesDisponiveis.contains(sessao)) {
