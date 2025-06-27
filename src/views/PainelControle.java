@@ -3,6 +3,7 @@ import java.util.Scanner;
 import entities.*;
 import repositories.*;
 
+
 public class PainelControle {
     private RepositorioSessao repositorioSessoes;
     private RepositorioClientes repositorioClientes;
@@ -12,6 +13,7 @@ public class PainelControle {
     private Scanner scanner = new Scanner(System.in);
     private Cliente clienteLogado;
     private Funcionario funcionarioLogado;
+
 
     public PainelControle() {
         repositorioClientes = new RepositorioClientes();
@@ -65,7 +67,7 @@ public class PainelControle {
     public void menuFuncionario() {
         int opcao;
         do {
-            System.out.println("\nMenu Funcionário:");
+            System.out.println("\n====== Menu Funcionário ======");
             System.out.println("1. Cadastrar Filme");
             System.out.println("2. Atualizar Filme");
             System.out.println("3. Visualizar Filmes");
@@ -90,7 +92,7 @@ public class PainelControle {
     }
 
     public void cadastrarFilme() {
-        System.out.println("==== Cadastrar Filme ====");
+        System.out.println("====== Cadastrar Filme ======");
         System.out.print("Nome do Filme: ");
         scanner.nextLine(); 
         String nome = scanner.nextLine();
@@ -116,7 +118,7 @@ public class PainelControle {
     }
 
     public void atualizarFilme() {
-        System.out.println("==== Atualizar Filme ====");
+        System.out.println("====== Atualizar Filme ======");
         System.out.print("Digite o nome do filme a ser atualizado: ");
         String nome = scanner.next();
         Filme filme = repositorioFilmes.obterFilmePorNome(nome);
@@ -141,7 +143,7 @@ public class PainelControle {
     }
 
     public void visualizarFilmes() {
-        System.out.println(" ==== Filmes cadastrados ====");
+        System.out.println(" ====== Filmes cadastrados ======");
         repositorioFilmes.obterTodosFilmes().forEach(filme -> {
             System.out.println("Nome: " + filme.getNome());
             System.out.println("Duração: " + filme.getDuracaoEmMinutos() + " min");
@@ -151,7 +153,7 @@ public class PainelControle {
     }
 
     public void deletarFilmes() {
-        System.out.println("==== Deletar Filme ====");
+        System.out.println("====== Deletar Filme ======");
         System.out.print("Digite o nome do filme a ser removido: ");
         String nome = scanner.next();
         if(repositorioFilmes.obterFilmePorNome(nome) != null) {
@@ -185,7 +187,7 @@ public class PainelControle {
     public void menuCliente() {
         int opcao;
         do {
-            System.out.println("\nMenu Cliente:");
+            System.out.println("\n ====== Menu Cliente ======");
             System.out.println("1. Comprar Ingresso");
             System.out.println("2. Visualizar Filmes em Cartaz");
             System.out.println("3. Meus Ingressos");
@@ -262,6 +264,5 @@ public class PainelControle {
             System.out.println("-------------------------");
         });
     }
-    
 
 }

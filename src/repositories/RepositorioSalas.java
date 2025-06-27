@@ -12,6 +12,7 @@ public class RepositorioSalas {
     private HashMap<Sessao, Sala> salasPorSessao;
     private char[][] assentosSalaPadrao;
 
+
     public RepositorioSalas() {
         salasTotais = new ArrayList<>();
         salasPorSessao = new HashMap<>();
