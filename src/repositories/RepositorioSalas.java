@@ -1,5 +1,6 @@
 package repositories;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,9 +12,9 @@ public class RepositorioSalas {
     private HashMap<Sessao, Sala> salasPorSessao;
 
 
-    public RepositorioSalas(List<Sala> salasTotais, HashMap<Sessao, Sala> salasPorSessao) {
-        this.salasTotais = salasTotais;
-        this.salasPorSessao = salasPorSessao;
+    public RepositorioSalas() {
+        this.salasTotais = new ArrayList<>();
+        this.salasPorSessao = new HashMap<>();
     }
 
     public void ocuparSalaComSessao(Sala sala, Sessao sessao) {

@@ -81,4 +81,13 @@ public class RepositorioClientes {
         }
         cliente.setSenha(novaSenha);
     }
+
+    public Cliente buscarporEmail(String email){
+        for (Cliente cliente : clientes) {
+            if (cliente.getEmail().equals(email)) {
+                return cliente;
+            }
+        }
+        return null;
+    }
 }
