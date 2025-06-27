@@ -90,4 +90,14 @@ public class RepositorioFuncionarios {
         funcionariosAtivos.remove(funcionario);
         funcionariosPorEmail.remove(funcionario.getEmail());
     }
+    public Funcionario autenticarFuncionario(String email, String senha) {
+        if (email == null || senha == null || email.isEmpty() || senha.isEmpty()) {
+            throw new IllegalArgumentException("Email e senha não podem ser nulos ou vazios.");
+        }
+        Funcionario funcionario = funcionariosPorEmail.get(email);
+        if (funcionario == null || !funcionario.getSenha().equals(senha)) {
+            throw new IllegalArgumentException("Email ou senha inválidos.");
+        }
+        return funcionario;
+    }
 }

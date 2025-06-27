@@ -60,4 +60,14 @@ public class RepositorioSessao {
         }
         sessao.setData(novaData);
     }
+
+    public void exibirSessoes(){
+        System.out.println("==== Filmes em Cartaz ====");
+        for(Sessao sessao : sessoesDisponiveis) {
+            System.out.println("Filme: " + sessao.getFilme().getNome());
+            System.out.println("Sala: " + sessao.getSala().getNumeroSala());
+            System.out.println("Data: " + sessao.getDataHora());
+            System.out.println("-------------------------");
+        }
+    }
 }

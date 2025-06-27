@@ -21,6 +21,13 @@ public class RepositorioFilmes {
         if (filme == null) {
             throw new IllegalArgumentException("Filme não pode ser nulo.");
         }
+        if(filmes.contains(filme)) {
+            throw new IllegalArgumentException("Filme já cadastrado.");
+        }
+        if (obterFilmePorNome(filme.getNome()) != null) {
+            throw new IllegalArgumentException("Já existe um filme cadastrado com este nome.");
+        }
+        System.out.println("Adicionando filme: " + filme.getNome());
         filmes.add(filme);
     }
 
@@ -47,6 +54,7 @@ public class RepositorioFilmes {
         if (!filmes.contains(filme)) {
             throw new IllegalArgumentException("Filme não encontrado.");
         }
+        System.out.println("Removendo filme: " + filme.getNome());
         filmes.remove(filme); 
     }
 
@@ -60,6 +68,10 @@ public class RepositorioFilmes {
         if (!filmes.contains(filme)) {
             throw new IllegalArgumentException("Filme não encontrado.");
         }
+        if (obterFilmePorNome(novoNome) != null) {
+            throw new IllegalArgumentException("Já existe um filme cadastrado com este nome.");
+        }
+        System.out.println("Modificando nome do filme: " + filme.getNome() + " para " + novoNome);
         filme.setNome(novoNome);
     }
 

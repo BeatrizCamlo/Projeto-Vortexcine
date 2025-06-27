@@ -81,4 +81,15 @@ public class RepositorioClientes {
         }
         cliente.setSenha(novaSenha);
     }
+
+    public Cliente autenticarCliente(String email, String senha) {
+        if (email == null || senha == null || email.isEmpty() || senha.isEmpty()) {
+            throw new IllegalArgumentException("Email e senha não podem ser nulos ou vazios.");
+        }
+        Cliente cliente = clientesPorEmail.get(email);
+        if (cliente != null && cliente.getSenha().equals(senha)) {
+            return cliente;
+        }
+        return null;
+    }
 }
