@@ -12,14 +12,8 @@ public class Main {
         RepositorioSalas repositorioSalas = new RepositorioSalas();
         RepositorioSessao repositorioSessoes = new RepositorioSessao();
 
-        PainelControle painel = new PainelControle(
-            repositorioSessoes,
-            repositorioClientes,
-            repositorioFilmes,
-            repositorioFuncionarios,
-            repositorioSalas
-        );
+        PainelControle painel = new PainelControle();
 
-        painel.processar();
+        painel.mostrarRecepcao();
     }
 }

@@ -100,4 +100,12 @@ public class RepositorioFilmes {
         }
         filme.setGenero(novoGenero);
     }
+
+    public void popularFilmesIniciais() {
+        filmes.add(new Filme("Matrix", 136, GeneroFilme.ACAO));
+        filmes.add(new Filme("O Poderoso Chefão", 175, GeneroFilme.DRAMA));
+        filmes.add(new Filme("Toy Story", 81, GeneroFilme.ANIMACAO));
+        filmes.add(new Filme("Titanic", 195, GeneroFilme.ROMANCE));
+        filmes.add(new Filme("Vingadores: Ultimato", 181, GeneroFilme.ACAO));
+    }
 }

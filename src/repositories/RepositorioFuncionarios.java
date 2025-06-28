@@ -100,4 +100,19 @@ public class RepositorioFuncionarios {
         }
         return funcionario;
     }
+
+public void inicializarGerentePadrao() {
+    Funcionario gerentePadrao = new Funcionario(
+            "adm",
+            "adm",
+            "adm",
+            true 
+        );
+
+        try {
+            adicionarFuncionario(gerentePadrao);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Gerente padrão já existente.");
+        }
+    }
 }

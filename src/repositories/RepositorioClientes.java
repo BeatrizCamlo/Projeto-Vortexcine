@@ -27,6 +27,7 @@ public class RepositorioClientes {
             throw new IllegalArgumentException("Já existe um cliente cadastrado com este email.");
         }
         clientes.add(cliente);
+        clientesPorEmail.put(cliente.getEmail(), cliente);
     }
 
     public Cliente obterClientePorId(int id) {
