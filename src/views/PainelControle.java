@@ -13,7 +13,8 @@ public class PainelControle {
     private Scanner scanner = new Scanner(System.in);
     private Cliente clienteLogado;
     private Funcionario funcionarioLogado;
-
+    private Funcionario funcionairioPadrao = new Funcionario("Raimunda Borges", "raimundinha@gmail.com", "123456", true);
+    private Cliente clientePadrao = new Cliente("Teobaldo Sousa", "aninha@hotmail.com", "654321");
 
     public PainelControle() {
         repositorioClientes = new RepositorioClientes();
@@ -22,10 +23,20 @@ public class PainelControle {
         repositorioSessoes = new RepositorioSessao();
         repositorioSalas = new RepositorioSalas();
         repositorioSalas.inicializarAssentos();
+        repositorioFuncionario.adicionarFuncionario(funcionairioPadrao);
+        repositorioClientes.adicionarCliente(clientePadrao);
     }
 
     public void mostrarRecepcao() {
-        System.out.println("Bem-vindo ao VortexCine!");
+        System.out.println("██╗   ██╗ ██████╗ ██████╗ ████████╗███████╗██╗   ██╗██████╗██╗███╗   ██╗███████╗");
+        System.out.println("██║   ██║██╔═══██╗██   ██╗╚══██╔══╝██╔════╝██║   ██║██╔═══ ██║████╗  ██║██╔════╝");
+        System.out.println("██║   ██║██║   ██║██ ███═╝   ██║   █████╗   ╚█████╔╝██║    ██║██╔██╗ ██║█████╗");
+        System.out.println("██║   ██║██║   ██║██  ██     ██║   ██╔══╝  ██║   ██║██║    ██║██║╚██╗██║██╔══╝");
+        System.out.println("╚██████╔╝╚██████╔╝██   ██    ██║   ███████╗██║   ██║██████╗██║██║ ╚████║███████╗");
+        System.out.println(" ╚═════╝  ╚═════╝ ╚═════╝    ╚═╝   ╚══════╝╚═╝   ╚═╝╚═════╝╚═╝╚═╝  ╚═══╝╚══════╝");
+        System.out.println();
+        System.out.println("                     V O R T E X  C I N E  🎬");
+        System.out.println("                   Bem-vindo ao seu universo de filmes!");
         loginTipoUsuario();
     }
 
