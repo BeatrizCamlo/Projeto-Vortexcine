@@ -79,7 +79,7 @@ public class PainelControle {
         }
 
         var novoCliente = new entities.Cliente(nome, email, senha);
-        repositorioClientes.adicionarCliente(novoCliente);
+        repositorioClientes.adicionarCliente(novoCliente, funcionarioLogado);
         System.out.println("Cadastro realizado com sucesso!");
     }
 
@@ -342,7 +342,7 @@ public class PainelControle {
 
         Cliente cliente = repositorioClientes.buscarporEmail(email);
         if (cliente != null) {
-            repositorioClientes.removerCliente(cliente);
+            repositorioClientes.removerCliente(cliente, funcionarioLogado);
             System.out.println("Cliente removido com sucesso.");
         } else {
             System.out.println("Cliente não encontrado.");
@@ -365,19 +365,19 @@ public class PainelControle {
         System.out.print("Novo nome (pressione Enter para manter atual): ");
         String novoNome = scanner.nextLine();
         if (!novoNome.isBlank()) {
-            repositorioClientes.modificarNomeCliente(cliente, novoNome);
+            repositorioClientes.modificarNomeCliente(cliente, novoNome, funcionarioLogado);
         }
 
         System.out.print("Novo email (pressione Enter para manter atual): ");
         String novoEmail = scanner.nextLine();
         if (!novoEmail.isBlank()) {
-            repositorioClientes.modificarEmailCliente(cliente, novoEmail);
+            repositorioClientes.modificarEmailCliente(cliente, novoEmail, funcionarioLogado);
         }
 
         System.out.print("Nova senha (pressione Enter para manter atual): ");
         String novaSenha = scanner.nextLine();
         if (!novaSenha.isBlank()) {
-            repositorioClientes.modificarSenhaCliente(cliente, novaSenha);
+            repositorioClientes.modificarSenhaCliente(cliente, novaSenha, funcionarioLogado);
         }
 
         System.out.println("Cliente atualizado com sucesso!");

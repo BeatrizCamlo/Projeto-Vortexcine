@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import entities.Cliente;
+import entities.Funcionario;
 
 public class RepositorioClientes {
 
@@ -16,7 +17,10 @@ public class RepositorioClientes {
         this.clientesPorEmail = new HashMap<>();
     }
 
-    public void adicionarCliente(Cliente cliente) {
+    public void adicionarCliente(Cliente cliente, Funcionario funcionario) {
+        if (funcionario == null || !funcionario.ehGerente()) {
+            throw new IllegalArgumentException("Apenas gerentes podem adicionar clientes.");
+        }
         if (cliente == null) {
             throw new IllegalArgumentException("Cliente não pode ser nulo.");
         }
@@ -43,7 +47,10 @@ public class RepositorioClientes {
         return new ArrayList<>(clientes);
     }
 
-    public void removerCliente(Cliente cliente) {
+    public void removerCliente(Cliente cliente, Funcionario funcionario) {
+        if (funcionario == null || !funcionario.ehGerente()) {
+            throw new IllegalArgumentException("Apenas gerentes podem remover clientes.");
+        }
         if (cliente == null) {
             throw new IllegalArgumentException("Cliente não pode ser nulo.");
         }
@@ -53,7 +60,10 @@ public class RepositorioClientes {
         clientes.remove(cliente);
     }
     
-    public void modificarNomeCliente(Cliente cliente, String novoNome) {
+    public void modificarNomeCliente(Cliente cliente, String novoNome, Funcionario funcionario) {
+        if (funcionario == null || !funcionario.ehGerente()) {
+            throw new IllegalArgumentException("Apenas gerentes podem modificar clientes.");
+        }
         if (cliente == null || novoNome == null || novoNome.isEmpty()) {
             throw new IllegalArgumentException("Cliente ou nome não podem ser nulos ou vazios.");
         }
@@ -63,7 +73,10 @@ public class RepositorioClientes {
         cliente.setNome(novoNome);
     }
 
-    public void modificarEmailCliente(Cliente cliente, String novoEmail) {
+    public void modificarEmailCliente(Cliente cliente, String novoEmail, Funcionario funcionario) {
+        if (funcionario == null || !funcionario.ehGerente()) {
+            throw new IllegalArgumentException("Apenas gerentes podem modificar clientes.");
+        }
         if (cliente == null || novoEmail == null || novoEmail.isEmpty()) {
             throw new IllegalArgumentException("Cliente ou email não podem ser nulos ou vazios.");
         }
@@ -73,7 +86,10 @@ public class RepositorioClientes {
         cliente.setEmail(novoEmail);
     }
 
-    public void modificarSenhaCliente(Cliente cliente, String novaSenha) {
+    public void modificarSenhaCliente(Cliente cliente, String novaSenha, Funcionario funcionario) {
+        if (funcionario == null || !funcionario.ehGerente()) {
+            throw new IllegalArgumentException("Apenas gerentes podem modificar clientes.");
+        }
         if (cliente == null || novaSenha == null || novaSenha.isEmpty()) {
             throw new IllegalArgumentException("Cliente ou senha não podem ser nulos ou vazios.");
         }
