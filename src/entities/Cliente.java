@@ -27,7 +27,6 @@ public class Cliente extends Pessoa {
 
     public void exibirInformacoes(){
         super.exibirInformacoes();
-        System.out.println("Quantidade de ingressos: " + ingressos.size());
     }
 
 }

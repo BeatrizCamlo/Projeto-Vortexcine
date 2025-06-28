@@ -37,10 +37,10 @@ public class Filme {
     }
 
     public void exibirInformacoes() {
-        System.out.println("=== Informações do Filme ===");
-        System.out.println("Nome: " + nome);
-        System.out.println("Duração: " + duracaoEmMinutos + " min");
-        System.out.println("Gênero: " + genero);
-        System.out.println("============================");
+        System.out.println("╔═══════════════════════════════════════╗");
+        System.out.printf ("║ Nome    : %-27s ║%n", nome);
+        System.out.printf ("║ Duração : %-27s ║%n", duracaoEmMinutos + " min");
+        System.out.printf ("║ Gênero  : %-27s ║%n", genero);
+        System.out.println("╚═══════════════════════════════════════╝");
     }
 }

@@ -44,8 +44,9 @@ public abstract class Pessoa {
     }
 
     public void exibirInformacoes() {
-        System.out.println("ID: " + id);
-        System.out.println("Nome: " + nome);
-        System.out.println("Email: " + email);
+        System.out.println("╔═══════════════════════════════════════════════════════╗");
+        System.out.printf("║ %-5s│ %-15s│ %-30s ║%n", 
+            "ID: " + id, "Nome: " + nome, "Email: " + email);
+        System.out.println("╚═══════════════════════════════════════════════════════╝");
     }
 }
