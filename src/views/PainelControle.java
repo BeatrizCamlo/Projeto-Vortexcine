@@ -203,7 +203,7 @@ public class PainelControle {
             System.out.println("Nenhum cliente cadastrado.");
             return;
         } else {
-            funcionario.forEach(Funcionario::exibirInformacoesFuncionario);
+            funcionario.forEach(Funcionario::exibirInformacoes);
         }
     }
 
