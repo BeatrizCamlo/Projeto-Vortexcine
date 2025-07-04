@@ -146,7 +146,7 @@ public class PainelControle {
                 case 3: visualizarFilmes(); break;
                 case 4: deletarFilmes(); break;
                 case 5: if (funcionarioLogado.ehGerente()) gerenciarClientes(); break;
-                case 6: ; break;
+                case 6: if (funcionarioLogado.ehGerente()) gerenciarFuncionarios(); break;
                 case 0: funcionarioLogado = null; break;
                 default: System.out.println("Opção inválida.");
             }
@@ -175,13 +175,142 @@ public class PainelControle {
     }
 
     public void gerenciarFuncionarios(){
+        int opcao;
+        do {
+            System.out.println("\n=== Gerenciar Funcionários ===");
+            System.out.println("1. Listar todos os Funcionarios");
+            System.out.println("2. Editar Funcionário");
+            System.out.println("3. Adicionar Funcionário");
+            System.out.println("4. Remover Funcionário");
+            System.out.println("0. Voltar");
+            System.out.print("Opção: ");
+            opcao = Integer.parseInt(scanner.nextLine());
 
+            switch (opcao) {
+                case 1: listarFuncionarios(); break;
+                case 2: editarFuncionarios(); break;
+                case 3: cadastrarFuncionario(); break;
+                case 4: removerFuncionario(); break;
+                case 0: System.out.println("Voltando..."); break;
+                default: System.out.println("Opção inválida."); break;
+            }
+        } while (opcao != 0);
+    }
+
+    public void listarFuncionarios(){
+        var funcionario = repositorioFuncionario.obterTodosFuncionarios();
+        if (funcionario.isEmpty()) {
+            System.out.println("Nenhum cliente cadastrado.");
+            return;
+        } else {
+            funcionario.forEach(Funcionario::exibirInformacoesFuncionario);
+        }
+    }
+
+    public void removerFuncionario(){
+        System.out.println("====== Remover Funcionário ======");
+        System.out.print("Digite o email do Funcionário a ser removido: ");
+        String email = scanner.nextLine();
+
+        Funcionario funcionario = repositorioFuncionario.buscarporEmail(email);
+        if (funcionario != null) {
+            repositorioFuncionario.removerFuncionario(funcionario);
+            System.out.println("Funcionário removido com sucesso.");
+        } else {
+            System.out.println("Funcionário não encontrado.");
+        }
+    }
+    public void editarFuncionarios(){
+        System.out.println("====== Editar Funcionário ======");
+        System.out.print("Digite o email do Funcionário a ser editado: ");
+        String email = scanner.nextLine();
+
+        Funcionario funcionario = repositorioFuncionario.buscarporEmail(email);
+        if (funcionario == null) {
+            System.out.println("Funcionário não encontrado.");
+            return;
+        }
+
+        System.out.print("Novo nome (pressione Enter para manter atual): ");
+        String novoNome = scanner.nextLine();
+        if (!novoNome.isBlank()) {
+            repositorioFuncionario.modificarNomeFuncionario(funcionario, novoNome);
+        }
+
+        System.out.print("Novo email (pressione Enter para manter atual): ");
+        String novoEmail = scanner.nextLine();
+        if (!novoEmail.isBlank()) {
+            repositorioFuncionario.modificarEmailFuncionario(funcionario, novoEmail);
+        }
+
+        System.out.print("Nova senha (pressione Enter para manter atual): ");
+        String novaSenha = scanner.nextLine();
+        if (!novaSenha.isBlank()) {
+            repositorioFuncionario.modificarSenhaFuncionario(funcionario, novaSenha);
+        }
+
+        while (true) {
+            System.out.print("Deseja alterar o cargo de gerente? (s/n): ");
+            String resposta = scanner.nextLine().trim().toLowerCase();
+            
+            if (resposta.equals("s")) {
+                boolean novoStatus = !funcionario.ehGerente();
+                repositorioFuncionario.modificarStatusGerente(funcionario, novoStatus);
+                String cargo = novoStatus ? "gerente" : "funcionário comum";
+                System.out.println("Cargo alterado para: " + cargo);
+                break;
+            } else if (resposta.equals("n")) {
+                break;
+            } else {
+                System.out.println("Opção inválida. Digite 's' para sim ou 'n' para não.");
+            }
+        }
+
+        System.out.println("Funcionário atualizado com sucesso!");   
+    }
+
+    private void cadastrarFuncionario() {
+        System.out.println("\n======== Cadastro de Funcionário ========");
+
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+
+        System.out.print("Senha: ");
+        String senha = scanner.nextLine();
+
+        if (repositorioFuncionario.buscarporEmail(email) != null) {
+            System.out.println("Já existe um funcionário cadastrado com esse email.");
+            return;
+        }
+
+        boolean isGerente = false;
+        while (true) {
+            System.out.print("Este funcionário é um gerente? (s/n): ");
+            String resposta = scanner.nextLine().trim().toLowerCase();
+
+            if (resposta.equals("s")) {
+                isGerente = true;
+                break;
+            } else if (resposta.equals("n")) {
+                isGerente = false;
+                break;
+            } else {
+                System.out.println("Opção inválida. Digite 's' para sim ou 'n' para não.");
+            }
+        }
+
+        Funcionario novoFuncionario = new Funcionario(nome, email, senha, isGerente);
+        repositorioFuncionario.adicionarFuncionario(novoFuncionario);
+
+        System.out.println("Funcionário cadastrado com sucesso!");
     }
 
     public void cadastrarFilme() {
         System.out.println("====== Cadastrar Filme ======");
         System.out.print("Nome do Filme: ");
-        scanner.nextLine(); 
         String nome = scanner.nextLine();
         System.out.print("Duração (em minutos): ");
         int duracao = scanner.nextInt();
@@ -272,10 +401,9 @@ public class PainelControle {
     public void atualizarFilme() {
         System.out.println("====== Atualizar Filme ======");
         System.out.print("Digite o nome do filme a ser atualizado: ");
-        String nome = scanner.next();
+        String nome = scanner.nextLine();
         Filme filme = repositorioFilmes.obterFilmePorNome(nome);
-        System.out.println("Novo nome do filme: ");
-        scanner.nextLine();
+        System.out.print("Novo nome do filme: ");
         String novoNome = scanner.nextLine();
         System.out.print("Novo gênero: ");
         String novoGeneroStr = scanner.nextLine();
@@ -287,7 +415,7 @@ public class PainelControle {
             }
         }
         System.out.print("Nova duração: ");
-        int novaDuracao = scanner.nextInt();
+        int novaDuracao = Integer.parseInt(scanner.nextLine());
         repositorioFilmes.modificarNomeFilme(funcionarioLogado, filme, novoNome);
         repositorioFilmes.modificarDuracaoFilme(funcionarioLogado, filme, novaDuracao);
         repositorioFilmes.modificarGeneroFilme(funcionarioLogado, filme, novoGenero);
@@ -317,7 +445,7 @@ public class PainelControle {
     public void deletarFilmes() {
         System.out.println("====== Deletar Filme ======");
         System.out.print("Digite o nome do filme a ser removido: ");
-        String nome = scanner.next();
+        String nome = scanner.nextLine();
         if(repositorioFilmes.obterFilmePorNome(nome) != null) {
             Filme filme = repositorioFilmes.obterFilmePorNome(nome);
             repositorioFilmes.removerFilme(funcionarioLogado, filme);
