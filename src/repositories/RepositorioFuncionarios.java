@@ -46,14 +46,18 @@ public class RepositorioFuncionarios {
         funcionario.setNome(novoNome);
     }
 
-    public void modificarEmailFuncionario(Funcionario funcionario, String email) {
-        if(email == null || email.isEmpty()) {
-            throw new IllegalArgumentException("Email não pode ser nulo ou vazio.");
+    public void modificarEmailFuncionario(Funcionario funcionario, String novoEmail) {
+        if (funcionario == null || novoEmail == null || novoEmail.isEmpty()) {
+            throw new IllegalArgumentException("Funcionário ou email não podem ser nulos ou vazios.");
         }
-        if(!funcionariosPorEmail.containsKey(email)) {
-            throw new IllegalArgumentException("Funcionário não encontrado com este email.");
+
+        if (!funcionariosAtivos.contains(funcionario)) {
+            throw new IllegalArgumentException("Funcionário não encontrado.");
         }
-        funcionario.setEmail(email);
+
+        funcionariosPorEmail.remove(funcionario.getEmail());
+        funcionario.setEmail(novoEmail);
+        funcionariosPorEmail.put(novoEmail, funcionario);
     }
 
     public void modificarSenhaFuncionario(Funcionario funcionario, String novaSenha) {
