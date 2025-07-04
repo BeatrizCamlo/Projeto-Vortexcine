@@ -18,7 +18,7 @@ public class Funcionario extends Pessoa {
         this.ehGerente = ehGerente;
     }
 
-    public void exibirInformacoesFuncionario() {
+    public void exibirInformacoes() {
         super.exibirInformacoes();
         System.out.println("Cargo: " + (ehGerente ? "Gerente" : "Funcionário"));
     }
