@@ -3,6 +3,7 @@ package views;
 import repositories.*;
 import entities.*;
 
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class MenuFuncionario {
@@ -11,6 +12,8 @@ public class MenuFuncionario {
     private final RepositorioFilmes repositorioFilmes;
     private final RepositorioFuncionarios repositorioFuncionarios;
     private final RepositorioClientes repositorioClientes;
+    private final RepositorioSalas repositorioSalas;
+    private final RepositorioSessao repositorioSessoes;
     private Funcionario funcionarioLogado;
 
     public MenuFuncionario(
@@ -18,13 +21,17 @@ public class MenuFuncionario {
         Funcionario funcionarioLogado,
         RepositorioFilmes repositorioFilmes,
         RepositorioFuncionarios repositorioFuncionarios,
-        RepositorioClientes repositorioClientes
+        RepositorioClientes repositorioClientes,
+        RepositorioSalas repositorioSalas,
+        RepositorioSessao repositorioSessoes
     ) {
         this.scanner = scanner;
         this.funcionarioLogado = funcionarioLogado;
         this.repositorioFilmes = repositorioFilmes;
         this.repositorioFuncionarios = repositorioFuncionarios;
         this.repositorioClientes = repositorioClientes;
+        this.repositorioSalas = repositorioSalas;
+        this.repositorioSessoes = repositorioSessoes;
     }
 
     public void exibirMenu() {
@@ -40,7 +47,8 @@ public class MenuFuncionario {
                 System.out.println("5. Gerenciar Clientes");
                 System.out.println("6. Gerenciar Funcionários");
             }
-
+            System.out.println("7. Criar sala");
+            System.out.println("8. Criar sessão");
             System.out.println("0. Deslogar");
             System.out.print("Opção: ");
             opcao = Integer.parseInt(scanner.nextLine());
@@ -60,6 +68,8 @@ public class MenuFuncionario {
                         gerenciarFuncionarios();
                     }
                 } break;
+                case 7: criarSala(); break;
+                case 8: criarSessao(); break;
                 case 0: funcionarioLogado = null; break;
                 default: System.out.println("Opção inválida."); break;
             }
@@ -344,4 +354,88 @@ public class MenuFuncionario {
             filmes.forEach(Filme::exibirInformacoes);
         }
     }
+
+    private void criarSala() {
+        System.out.println("\n=== Criar Nova Sala ===");
+        System.out.print("Digite o número da nova sala: ");
+        int numero = Integer.parseInt(scanner.nextLine());
+
+        Sala existente = repositorioSalas.buscarPorNumero(numero);
+        if (existente != null) {
+            System.out.println("Já existe uma sala com esse número.");
+            return;
+        }
+
+        Sala novaSala = new Sala(numero);
+        repositorioSalas.adicionarSala(novaSala);
+        System.out.println("Sala " + numero + " criada com sucesso!");
+    }
+
+    private void criarSessao() {
+        System.out.println("\n=== Criar Sessão ===");
+
+        var filmes = repositorioFilmes.obterTodosFilmes();
+        if (filmes.isEmpty()) {
+            System.out.println("Nenhum filme cadastrado.");
+            return;
+        }
+
+        System.out.println("Filmes disponíveis:");
+        for (int i = 0; i < filmes.size(); i++) {
+            System.out.println((i + 1) + ". " + filmes.get(i).getNome());
+        }
+        System.out.print("Escolha o filme: ");
+        int opcaoFilme = Integer.parseInt(scanner.nextLine()) - 1;
+        if (opcaoFilme < 0 || opcaoFilme >= filmes.size()) {
+            System.out.println("Filme inválido.");
+            return;
+        }
+        Filme filmeSelecionado = filmes.get(opcaoFilme);
+
+        var salas = repositorioSalas.getTodasAsSalas();
+        if (salas.isEmpty()) {
+            System.out.println("Nenhuma sala cadastrada.");
+            return;
+        }
+
+        System.out.println("Salas disponíveis:");
+        for (int i = 0; i < salas.size(); i++) {
+            System.out.println((i + 1) + ". Sala " + salas.get(i).getNumeroSala());
+        }
+        System.out.print("Escolha a sala: ");
+        int opcaoSala = Integer.parseInt(scanner.nextLine()) - 1;
+        if (opcaoSala < 0 || opcaoSala >= salas.size()) {
+            System.out.println("Sala inválida.");
+            return;
+        }
+        Sala salaSelecionada = salas.get(opcaoSala);
+
+        try {
+            System.out.print("Digite a data (ex: 2025-07-10): ");
+            String data = scanner.nextLine();
+            System.out.print("Digite a hora (ex: 14:30): ");
+            String hora = scanner.nextLine();
+            LocalDateTime dataHora = LocalDateTime.parse(data + "T" + hora);
+
+            boolean conflito = salaSelecionada.getSessoes().stream()
+                .anyMatch(s -> s.getDataHora().equals(dataHora));
+            if (conflito) {
+                System.out.println("Já existe uma sessão nesta sala neste horário.");
+                return;
+            }
+
+            Sessao novaSessao = new Sessao(filmeSelecionado, salaSelecionada, dataHora);
+            repositorioSessoes.adicionarSessao(novaSessao);
+            salaSelecionada.adicionarSessao(novaSessao);
+            repositorioSalas.ocuparSalaComSessao(salaSelecionada, novaSessao);
+
+            System.out.println("Sessão criada com sucesso!");
+
+        } catch (Exception e) {
+            System.out.println("Erro ao interpretar data/hora. Tente novamente.");
+        }
+    }
+
+    
+
 }

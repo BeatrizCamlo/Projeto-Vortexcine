@@ -11,13 +11,12 @@ public class PainelControle {
     private final RepositorioClientes repositorioClientes = new RepositorioClientes();
     private final RepositorioFilmes repositorioFilmes = new RepositorioFilmes();
     private final RepositorioFuncionarios repositorioFuncionarios = new RepositorioFuncionarios();
-    private final RepositorioSessao repositorioSessao = new RepositorioSessao();
+    private final RepositorioSessao repositorioSessoes = new RepositorioSessao();
     private final RepositorioSalas repositorioSalas = new RepositorioSalas();
 
-    public PainelControle() {
-        repositorioSalas.inicializarAssentos();
-        
-    }
+    //public PainelControle() {
+    //    repositorioSalas.inicializarAssentos();
+    //}
 
     public void mostrarRecepcao() {
         System.out.println("██╗   ██╗ ██████╗ ██████╗ ████████╗███████╗██╗   ██╗██████╗██╗███╗   ██╗███████╗");
@@ -77,7 +76,6 @@ public class PainelControle {
             return;
         }
 
-
         Cliente novoCliente = new Cliente(nome, email, senha);
         repositorioClientes.adicionarCliente(novoCliente);
 
@@ -93,7 +91,7 @@ public class PainelControle {
         Cliente clienteLogado = repositorioClientes.autenticarCliente(email, senha);
         if (clienteLogado != null) {
             System.out.println("Login realizado com sucesso!");
-            MenuCliente menuCliente = new MenuCliente(scanner, repositorioClientes, repositorioFilmes, repositorioSessao, repositorioSalas);
+            MenuCliente menuCliente = new MenuCliente(scanner, repositorioClientes, repositorioFilmes, repositorioSessoes, repositorioSalas);
             menuCliente.exibirMenu();
         } else {
             System.out.println("Credenciais inválidas.");
@@ -114,7 +112,9 @@ public class PainelControle {
                 funcionarioLogado,
                 repositorioFilmes,
                 repositorioFuncionarios,
-                repositorioClientes
+                repositorioClientes,
+                repositorioSalas,
+                repositorioSessoes
             );
             menuFuncionario.exibirMenu();
         } else {

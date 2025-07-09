@@ -1,5 +1,6 @@
 package entities;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Funcionario extends Pessoa {
@@ -30,7 +31,7 @@ public class Funcionario extends Pessoa {
         return filme;
     }
 
-    public Sessao criarSessao(Filme filme, Sala sala, String dataHora, List<Sessao> listaSessoes) {
+    public Sessao criarSessao(Filme filme, Sala sala, LocalDateTime dataHora, List<Sessao> listaSessoes) {
         Sessao sessao = new Sessao(filme, sala, dataHora);
         listaSessoes.add(sessao);
         System.out.println("Sessão criada para o filme " + filme.getNome() + " na sala " + sala.getNumeroSala() + " em " + dataHora);

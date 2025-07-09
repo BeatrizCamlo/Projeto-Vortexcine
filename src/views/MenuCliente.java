@@ -74,6 +74,7 @@ public class MenuCliente {
         //reservarAssento();
     }
 
+    /* 
     private void mostrarAssentos() {
         char[][] assentos = repositorioSalas.getAssentosSalaPadrao();
         System.out.println("\nAssentos (A = livre, X = ocupado):");
@@ -91,7 +92,8 @@ public class MenuCliente {
             System.out.println();
         }
     }
-
+    */
+    /* 
     private void reservarAssento() {
         char[][] assentos = repositorioSalas.getAssentosSalaPadrao();
 
@@ -111,6 +113,7 @@ public class MenuCliente {
             System.out.println("Assento já ocupado.");
         }
     }
+    */
 
     private void mostrarFilmesEmCartaz() {
         System.out.println(" ====== Filmes em Exibição ======");

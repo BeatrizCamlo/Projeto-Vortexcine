@@ -2,15 +2,16 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
 public class Sessao {
     private Filme filme;
     private Sala sala;
-    private String dataHora;
+    private LocalDateTime  dataHora;
     private List<Cliente> publico;
     private List<Assento> assentosOcupados;
 
-    public Sessao(Filme filme, Sala sala, String dataHora) {
+    public Sessao(Filme filme, Sala sala, LocalDateTime dataHora) {
         this.filme = filme;
         this.sala = sala;
         this.dataHora = dataHora;
@@ -30,7 +31,7 @@ public class Sessao {
         this.sala = sala;
     }
 
-    public String getDataHora() {
+    public LocalDateTime getDataHora() {
         return dataHora;
     }
 

@@ -10,12 +10,22 @@ import entities.Sessao;
 public class RepositorioSalas {
     private List<Sala> salasTotais;
     private HashMap<Sessao, Sala> salasPorSessao;
-    private char[][] assentosSalaPadrao;
 
 
     public RepositorioSalas() {
         salasTotais = new ArrayList<>();
         salasPorSessao = new HashMap<>();
+    }
+
+    public void adicionarSala(Sala sala) {
+        if (sala == null) {
+            throw new IllegalArgumentException("Sala não pode ser nula.");
+        }
+        salasTotais.add(sala);
+    }
+
+    public List<Sala> getTodasAsSalas() {
+        return salasTotais;
     }
 
     public void ocuparSalaComSessao(Sala sala, Sessao sessao) {
@@ -38,22 +48,14 @@ public class RepositorioSalas {
         }
         return  salasPorSessao.get(sessao);
     }
-    
-     public void inicializarAssentos() {
-        assentosSalaPadrao = new char[10][10];
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                assentosSalaPadrao[i][j] = 'A'; // 'A' representa assento livre
+
+    public Sala buscarPorNumero(int numero) {
+        for (Sala sala : salasTotais) {
+            if (sala.getNumeroSala() == numero) {
+                return sala;
             }
         }
-    }
-
-     public char[][] getAssentosSalaPadrao() {
-        return assentosSalaPadrao;
-    }
-
-    public void setAssentosSalaPadrao(char[][] assentosAtualizados) {
-        this.assentosSalaPadrao = assentosAtualizados;
+        return null;
     }
     
 }

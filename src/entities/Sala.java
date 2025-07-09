@@ -45,7 +45,7 @@ public class Sala {
     }
 
     public void exibirAssentos() {
-        for (int i = 0; i <= assentos.size(); i++) {
+        for (int i = 0; i < assentos.size(); i++) {
             assentos.get(i).exibirInformacoesAssento();
         }
     }
@@ -56,4 +56,43 @@ public class Sala {
         System.out.println("Sessões nesta sala: " + sessoes.size());
     }
 
+    public void exibirMapaAssentos() {
+        System.out.println("Sala " + numeroSala + " - Mapa de Assentos\n");
+
+        int ocupados = 0;
+        int colunas = 10;
+        String[] fileiras = {"A", "B", "C", "D", "E"};
+
+        System.out.print("    ");
+        for (int col = 1; col <= colunas; col++) {
+            System.out.printf("%-4d", col);
+        }
+        System.out.println();
+
+        for (String linha : fileiras) {
+            System.out.print(linha + ": ");
+            for (int col = 1; col <= colunas; col++) {
+                Assento assento = buscarAssento(linha, col);
+                boolean ocupado = assento != null && assento.isOcupado();
+                System.out.print(ocupado ? "[X] " : "[ ] ");
+                if (ocupado) {
+                    ocupados++;
+                }
+            }
+            System.out.println();
+        }
+
+        int total = assentos.size();
+        System.out.println("\n [ ] = livre | [X] = ocupado");
+        System.out.printf("Capacidade total: %d | Ocupados: %d | Livres: %d\n\n", total, ocupados, total - ocupados);
+    }
+
+    public Assento buscarAssento(String linha, int coluna) {
+        for (Assento a : assentos) {
+            if (a.getCoordenada().getLinha().equalsIgnoreCase(linha) && a.getCoordenada().getColuna() == coluna) {
+                return a;
+            }
+        }
+        return null;
+    }
 }
