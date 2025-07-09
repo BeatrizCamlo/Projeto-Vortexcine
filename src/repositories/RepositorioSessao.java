@@ -17,6 +17,10 @@ public class RepositorioSessao {
         this.sessoesPorFilme = new HashMap<>();
     }
 
+    public List<Sessao> obterTodasSessoes() {
+        return sessoesDisponiveis;
+    }
+
     public void adicionarSessao(Sessao sessao) {
         if (sessao == null) {
             throw new IllegalArgumentException("Sessão não pode ser nula.");
@@ -59,15 +63,5 @@ public class RepositorioSessao {
             throw new IllegalArgumentException("Sessão não encontrada.");
         }
         sessao.setData(novaData);
-    }
-
-    public void exibirSessoes(){
-        System.out.println("==== Filmes em Cartaz ====");
-        for(Sessao sessao : sessoesDisponiveis) {
-            System.out.println("Filme: " + sessao.getFilme().getNome());
-            System.out.println("Sala: " + sessao.getSala().getNumeroSala());
-            System.out.println("Data: " + sessao.getDataHora());
-            System.out.println("-------------------------");
-        }
     }
 }

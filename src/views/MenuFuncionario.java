@@ -4,6 +4,7 @@ import repositories.*;
 import entities.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Scanner;
 
 public class MenuFuncionario {
@@ -49,6 +50,7 @@ public class MenuFuncionario {
             }
             System.out.println("7. Criar sala");
             System.out.println("8. Criar sessão");
+            System.out.println("9. Exibir todas as Sessões");
             System.out.println("0. Deslogar");
             System.out.print("Opção: ");
             opcao = Integer.parseInt(scanner.nextLine());
@@ -70,6 +72,7 @@ public class MenuFuncionario {
                 } break;
                 case 7: criarSala(); break;
                 case 8: criarSessao(); break;
+                case 9: visualizarSessoes(); break;
                 case 0: funcionarioLogado = null; break;
                 default: System.out.println("Opção inválida."); break;
             }
@@ -436,6 +439,20 @@ public class MenuFuncionario {
         }
     }
 
-    
+    private void visualizarSessoes() {
+        System.out.println("==== Sessões Cadastradas ====");
 
+        List<Sessao> sessoes = repositorioSessoes.obterTodasSessoes();
+        if (sessoes.isEmpty()) {
+            System.out.println("Nenhuma sessão cadastrada.");
+            return;
+        }
+
+        for (Sessao sessao : sessoes) {
+            System.out.println("Filme: " + sessao.getFilme().getNome());
+            System.out.println("Sala: " + sessao.getSala().getNumeroSala());
+            System.out.println("Data/Hora: " + sessao.getDataHora());
+            System.out.println("-------------------------");
+        }
+    }
 }
