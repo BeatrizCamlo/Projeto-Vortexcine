@@ -1,11 +1,10 @@
 package repositories;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import entities.Sala;
 import entities.Sessao;
+import exceptions.*;
 
 public class RepositorioSalas {
     private List<Sala> salasTotais;
@@ -20,21 +19,21 @@ public class RepositorioSalas {
 
     public void ocuparSalaComSessao(Sala sala, Sessao sessao) {
         if (sala == null || sessao == null) {
-            throw new IllegalArgumentException("Sala ou sessão não podem ser nulos.");
+            throw new CampoInvalido("Sala ou sessão não podem ser nulos.");
         }
         if (!salasTotais.contains(sala)) {
-            throw new IllegalArgumentException("Sala não encontrada.");
+            throw new CampoInvalido("Sala não encontrada.");
         }
         if (!salasPorSessao.containsKey(sessao)) {
             salasPorSessao.put(sessao, sala);
         } else {
-           throw new IllegalArgumentException("Sessão já está ocupada em outra sala.");
+           throw new CampoInvalido("Sessão já está ocupada em outra sala.");
         }
     }
 
     public Sala buscarSalaPorSessao(Sessao sessao) {
         if (sessao == null) {
-            throw new IllegalArgumentException("Sessão não pode ser nula.");
+            throw new CampoInvalido("Sessão não pode ser nula.");
         }
         return  salasPorSessao.get(sessao);
     }

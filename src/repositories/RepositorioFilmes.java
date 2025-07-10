@@ -1,11 +1,10 @@
 package repositories;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import entities.Filme;
 import entities.Funcionario;
 import entities.GeneroFilme;
+import exceptions.*;
 
 public class RepositorioFilmes {
     private List<Filme> filmes;
@@ -16,16 +15,16 @@ public class RepositorioFilmes {
 
     public void adicionarFilme(Funcionario funcionario, Filme filme) {
         if(!funcionario.ehGerente()){
-            throw new IllegalArgumentException("Apenas gerentes podem adicionar filmes.");
+            throw new CampoInvalido("Apenas gerentes podem adicionar filmes.");
         }
         if (filme == null) {
-            throw new IllegalArgumentException("Filme não pode ser nulo.");
+            throw new CampoInvalido("Filme não pode ser nulo.");
         }
         if(filmes.contains(filme)) {
-            throw new IllegalArgumentException("Filme já cadastrado.");
+            throw new CampoInvalido("Filme já cadastrado.");
         }
         if (obterFilmePorNome(filme.getNome()) != null) {
-            throw new IllegalArgumentException("Já existe um filme cadastrado com este nome.");
+            throw new CampoInvalido("Já existe um filme cadastrado com este nome.");
         }
         System.out.println("Adicionando filme: " + filme.getNome());
         filmes.add(filme);
@@ -46,13 +45,13 @@ public class RepositorioFilmes {
 
     public void removerFilme(Funcionario funcionario, Filme filme) {
         if(!funcionario.ehGerente()){
-            throw new IllegalArgumentException("Apenas gerentes podem remover filmes.");
+            throw new CampoInvalido("Apenas gerentes podem remover filmes.");
         }
         if (filme == null) {
-            throw new IllegalArgumentException("Filme não pode ser nulo.");
+            throw new CampoInvalido("Filme não pode ser nulo.");
         }
         if (!filmes.contains(filme)) {
-            throw new IllegalArgumentException("Filme não encontrado.");
+            throw new CampoInvalido("Filme não encontrado.");
         }
         System.out.println("Removendo filme: " + filme.getNome());
         filmes.remove(filme); 
@@ -60,16 +59,16 @@ public class RepositorioFilmes {
 
     public void modificarNomeFilme(Funcionario funcionario, Filme filme, String novoNome) {
         if(!funcionario.ehGerente()){
-            throw new IllegalArgumentException("Apenas gerentes podem modificar filmes.");
+            throw new CampoInvalido("Apenas gerentes podem modificar filmes.");
         }
         if (filme == null || novoNome == null || novoNome.isEmpty()) {
-            throw new IllegalArgumentException("Filme ou nome não podem ser nulos ou vazios.");
+            throw new CampoInvalido("Filme ou nome não podem ser nulos ou vazios.");
         }
         if (!filmes.contains(filme)) {
-            throw new IllegalArgumentException("Filme não encontrado.");
+            throw new CampoInvalido("Filme não encontrado.");
         }
         if (obterFilmePorNome(novoNome) != null) {
-            throw new IllegalArgumentException("Já existe um filme cadastrado com este nome.");
+            throw new CampoInvalido("Já existe um filme cadastrado com este nome.");
         }
         System.out.println("Modificando nome do filme: " + filme.getNome() + " para " + novoNome);
         filme.setNome(novoNome);
@@ -77,26 +76,26 @@ public class RepositorioFilmes {
 
     public void modificarDuracaoFilme(Funcionario funcionario, Filme filme, int novaDuracao) {
         if(!funcionario.ehGerente()){
-            throw new IllegalArgumentException("Apenas gerentes podem modificar filmes.");
+            throw new CampoInvalido("Apenas gerentes podem modificar filmes.");
         }
         if (filme == null || novaDuracao <= 0) {
-            throw new IllegalArgumentException("Filme não pode ser nulo e duração deve ser positiva.");
+            throw new CampoInvalido("Filme não pode ser nulo e duração deve ser positiva.");
         }
         if (!filmes.contains(filme)) {
-            throw new IllegalArgumentException("Filme não encontrado.");
+            throw new CampoInvalido("Filme não encontrado.");
         }
         filme.setDuracaoEmMinutos(novaDuracao);
     }
 
     public void modificarGeneroFilme(Funcionario funcionario, Filme filme, GeneroFilme novoGenero) {
         if(!funcionario.ehGerente()){
-            throw new IllegalArgumentException("Apenas gerentes podem modificar filmes.");
+            throw new CampoInvalido("Apenas gerentes podem modificar filmes.");
         }
         if (filme == null || novoGenero == null || novoGenero.toString().isEmpty()) {
-            throw new IllegalArgumentException("Filme ou gênero não podem ser nulos ou vazios.");
+            throw new CampoInvalido("Filme ou gênero não podem ser nulos ou vazios.");
         }
         if (!filmes.contains(filme)) {
-            throw new IllegalArgumentException("Filme não encontrado.");
+            throw new CampoInvalido("Filme não encontrado.");
         }
         filme.setGenero(novoGenero);
     }

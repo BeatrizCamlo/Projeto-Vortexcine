@@ -2,7 +2,7 @@ package views;
 
 import repositories.*;
 import entities.*;
-
+import exceptions.*;
 import java.util.Scanner;
 
 public class MenuFuncionario {
@@ -268,7 +268,7 @@ public class MenuFuncionario {
         GeneroFilme genero = null;
         try {
             genero = GeneroFilme.valueOf(generoStr);
-        } catch (IllegalArgumentException e) {
+        } catch (CampoInvalido e) {
             System.out.println("Gênero inválido.");
             return;
         }
@@ -302,7 +302,7 @@ public class MenuFuncionario {
             try {
                 GeneroFilme genero = GeneroFilme.valueOf(novoGenero.toUpperCase());
                 repositorioFilmes.modificarGeneroFilme(funcionarioLogado, filme, genero);
-            } catch (IllegalArgumentException e) {
+            } catch (CampoInvalido e) {
                 System.out.println("Gênero inválido. Gênero não alterado.");
             }
         }
