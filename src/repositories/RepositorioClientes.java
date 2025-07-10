@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import entities.Cliente;
+import interfaces.RepositorioInterface;
 
-public class RepositorioClientes {
+public class RepositorioClientes implements RepositorioInterface<Cliente> {
 
     private List<Cliente> clientes;
     private HashMap<String, Cliente> clientesPorEmail;
@@ -15,8 +16,8 @@ public class RepositorioClientes {
         this.clientes = new ArrayList<>();
         this.clientesPorEmail = new HashMap<>();
     }
-
-    public void adicionarCliente(Cliente cliente) {
+    @Override
+    public void cadastrar(Cliente cliente) {
         if (cliente == null) {
             throw new IllegalArgumentException("Cliente não pode ser nulo.");
         }
@@ -43,7 +44,8 @@ public class RepositorioClientes {
         return new ArrayList<>(clientes);
     }
 
-    public void removerCliente(Cliente cliente) {
+    @Override
+    public void remover(Cliente cliente) {
         if (cliente == null) {
             throw new IllegalArgumentException("Cliente não pode ser nulo.");
         }
@@ -53,7 +55,7 @@ public class RepositorioClientes {
         clientes.remove(cliente);
     }
     
-    public void modificarNomeCliente(Cliente cliente, String novoNome) {
+    public void editarNome(Cliente cliente, String novoNome) {
         if (cliente == null || novoNome == null || novoNome.isEmpty()) {
             throw new IllegalArgumentException("Cliente ou nome não podem ser nulos ou vazios.");
         }
@@ -63,7 +65,8 @@ public class RepositorioClientes {
         cliente.setNome(novoNome);
     }
 
-    public void modificarEmailCliente(Cliente cliente, String novoEmail) {
+    @Override
+    public void editarEmail(Cliente cliente, String novoEmail) {
         if (cliente == null || novoEmail == null || novoEmail.isEmpty()) {
             throw new IllegalArgumentException("Cliente ou email não podem ser nulos ou vazios.");
         }
@@ -73,7 +76,8 @@ public class RepositorioClientes {
         cliente.setEmail(novoEmail);
     }
 
-    public void modificarSenhaCliente(Cliente cliente, String novaSenha) {
+    @Override
+    public void editarSenha(Cliente cliente, String novaSenha) {
         if (cliente == null || novaSenha == null || novaSenha.isEmpty()) {
             throw new IllegalArgumentException("Cliente ou senha não podem ser nulos ou vazios.");
         }
@@ -95,12 +99,34 @@ public class RepositorioClientes {
             return null;
         }
 
-    public Cliente buscarporEmail(String email){
+
+    @Override
+    public Cliente obterPorNome(String nome) {
+        for (Cliente cliente : clientes) {
+            if (cliente.getNome().equals(nome)) {
+                return cliente;
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public Cliente obterPorEmail(String email){
         for (Cliente cliente : clientes) {
             if (cliente.getEmail().equals(email)) {
                 return cliente;
             }
 
+        }
+        return null;
+    }
+
+    @Override
+    public Cliente obterPorId(int id) {
+        for (Cliente cliente : clientes) {
+            if (cliente.getId() == id) {
+                return cliente;
+            }
         }
         return null;
     }

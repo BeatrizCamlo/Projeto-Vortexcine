@@ -100,7 +100,7 @@ public class MenuFuncionario {
     private void editarCliente() {
         System.out.print("Digite o email do cliente a ser editado: ");
         String email = scanner.nextLine();
-        var cliente = repositorioClientes.buscarporEmail(email);
+        var cliente = repositorioClientes.obterPorEmail(email);
 
         if (cliente == null) {
             System.out.println("Cliente não encontrado.");
@@ -110,19 +110,19 @@ public class MenuFuncionario {
         System.out.print("Novo nome (Enter para manter): ");
         String novoNome = scanner.nextLine();
         if (!novoNome.isBlank()) {
-            repositorioClientes.modificarNomeCliente(cliente, novoNome);
+            repositorioClientes.editarNome(cliente, novoNome);
         }
 
         System.out.print("Novo email (Enter para manter): ");
         String novoEmail = scanner.nextLine();
         if (!novoEmail.isBlank()) {
-            repositorioClientes.modificarEmailCliente(cliente, novoEmail);
+            repositorioClientes.editarEmail(cliente, novoEmail);
         }
 
         System.out.print("Nova senha (Enter para manter): ");
         String novaSenha = scanner.nextLine();
         if (!novaSenha.isBlank()) {
-            repositorioClientes.modificarSenhaCliente(cliente, novaSenha);
+            repositorioClientes.editarSenha(cliente, novaSenha);
         }
 
         System.out.println("Cliente atualizado com sucesso.");
@@ -131,9 +131,9 @@ public class MenuFuncionario {
     private void removerCliente() {
         System.out.print("Digite o email do cliente a ser removido: ");
         String email = scanner.nextLine();
-        var cliente = repositorioClientes.buscarporEmail(email);
+        var cliente = repositorioClientes.obterPorEmail(email);
         if (cliente != null) {
-            repositorioClientes.removerCliente(cliente);
+            repositorioClientes.remover(cliente);
             System.out.println("Cliente removido com sucesso.");
         } else {
             System.out.println("Cliente não encontrado.");
@@ -181,7 +181,7 @@ public class MenuFuncionario {
         System.out.print("Senha: ");
         String senha = scanner.nextLine();
 
-        if (repositorioFuncionarios.buscarporEmail(email) != null) {
+        if (repositorioFuncionarios.obterPorEmail(email) != null) {
             System.out.println("Já existe um funcionário com esse email.");
             return;
         }
@@ -201,16 +201,16 @@ public class MenuFuncionario {
         }
 
         Funcionario novo = new Funcionario(nome, email, senha, isGerente);
-        repositorioFuncionarios.adicionarFuncionario(novo);
+        repositorioFuncionarios.cadastrar(novo);
         System.out.println("Funcionário cadastrado com sucesso.");
     }
 
     private void removerFuncionario() {
         System.out.print("Email do funcionário a remover: ");
         String email = scanner.nextLine();
-        var funcionario = repositorioFuncionarios.buscarporEmail(email);
+        var funcionario = repositorioFuncionarios.buscarPorEmail(email);
         if (funcionario != null) {
-            repositorioFuncionarios.removerFuncionario(funcionario);
+            repositorioFuncionarios.remover(funcionario);
             System.out.println("Funcionário removido com sucesso.");
         } else {
             System.out.println("Funcionário não encontrado.");
@@ -220,7 +220,7 @@ public class MenuFuncionario {
     private void editarFuncionarios() {
         System.out.print("Email do funcionário a editar: ");
         String email = scanner.nextLine();
-        var funcionario = repositorioFuncionarios.buscarporEmail(email);
+        var funcionario = repositorioFuncionarios.obterPorEmail(email);
         if (funcionario == null) {
             System.out.println("Funcionário não encontrado.");
             return;
@@ -229,19 +229,19 @@ public class MenuFuncionario {
         System.out.print("Novo nome (Enter para manter): ");
         String novoNome = scanner.nextLine();
         if (!novoNome.isBlank()) {
-            repositorioFuncionarios.modificarNomeFuncionario(funcionario, novoNome);
+            repositorioFuncionarios.editarNome(funcionario, novoNome);
         }
 
         System.out.print("Novo email (Enter para manter): ");
         String novoEmail = scanner.nextLine();
         if (!novoEmail.isBlank()) {
-            repositorioFuncionarios.modificarEmailFuncionario(funcionario, novoEmail);
+            repositorioFuncionarios.editarEmail(funcionario, novoEmail);
         }
 
         System.out.print("Nova senha (Enter para manter): ");
         String novaSenha = scanner.nextLine();
         if (!novaSenha.isBlank()) {
-            repositorioFuncionarios.modificarSenhaFuncionario(funcionario, novaSenha);
+            repositorioFuncionarios.editarSenha(funcionario, novaSenha);
         }
 
         System.out.print("Alterar status de gerente? (s/n): ");

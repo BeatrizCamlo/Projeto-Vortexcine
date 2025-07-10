@@ -72,14 +72,14 @@ public class PainelControle {
         System.out.print("Senha: ");
         String senha = scanner.nextLine();
 
-        if (repositorioClientes.buscarporEmail(email) != null) {
+        if (repositorioClientes.obterPorEmail(email) != null) {
             System.out.println("Já existe um cliente com esse email.");
             return;
         }
 
 
         Cliente novoCliente = new Cliente(nome, email, senha);
-        repositorioClientes.adicionarCliente(novoCliente);
+        repositorioClientes.cadastrar(novoCliente);
 
         System.out.println("Cadastro realizado com sucesso!");
     }

@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import entities.Funcionario;
+import interfaces.RepositorioInterface;
 
-public class RepositorioFuncionarios {
+public class RepositorioFuncionarios implements RepositorioInterface<Funcionario> {
+
     private List<Funcionario> funcionariosAtivos;
     private HashMap<String, Funcionario> funcionariosPorEmail;
 
@@ -15,18 +17,84 @@ public class RepositorioFuncionarios {
         this.funcionariosPorEmail = new HashMap<>();
     }
 
-    public void adicionarFuncionario(Funcionario funcionario) {
+    @Override
+    public void cadastrar(Funcionario funcionario) {
+        if (funcionario == null) {
+            throw new IllegalArgumentException("Funcionário não pode ser nulo.");
+        }
         if (funcionariosAtivos.contains(funcionario)) {
             throw new IllegalArgumentException("Funcionário já cadastrado.");
         }
         if (funcionariosPorEmail.containsKey(funcionario.getEmail())) {
-            throw new IllegalArgumentException("Já existe um funcionário cadastrado com este email.");
+            throw new IllegalArgumentException("Já existe um funcionário com este email.");
         }
         funcionariosAtivos.add(funcionario);
         funcionariosPorEmail.put(funcionario.getEmail(), funcionario);
     }
 
-    public Funcionario buscarFuncionarioPorId(int id) {
+    @Override
+    public void remover(Funcionario funcionario) {
+        if (funcionario == null || !funcionariosAtivos.contains(funcionario)) {
+            throw new IllegalArgumentException("Funcionário não encontrado.");
+        }
+        funcionariosAtivos.remove(funcionario);
+        funcionariosPorEmail.remove(funcionario.getEmail());
+    }
+
+    @Override
+    public void editarNome(Funcionario funcionario, String novoNome) {
+        if (funcionario == null || novoNome == null || novoNome.isEmpty()) {
+            throw new IllegalArgumentException("Funcionário ou nome inválidos.");
+        }
+        if (!funcionariosAtivos.contains(funcionario)) {
+            throw new IllegalArgumentException("Funcionário não encontrado.");
+        }
+        funcionario.setNome(novoNome);
+    }
+
+    @Override
+    public void editarEmail(Funcionario funcionario, String novoEmail) {
+        if (funcionario == null || novoEmail == null || novoEmail.isEmpty()) {
+            throw new IllegalArgumentException("Funcionário ou email inválidos.");
+        }
+        if (!funcionariosAtivos.contains(funcionario)) {
+            throw new IllegalArgumentException("Funcionário não encontrado.");
+        }
+        if (funcionariosPorEmail.containsKey(novoEmail)) {
+            throw new IllegalArgumentException("Já existe um funcionário com este email.");
+        }
+
+        funcionariosPorEmail.remove(funcionario.getEmail());
+        funcionario.setEmail(novoEmail);
+        funcionariosPorEmail.put(novoEmail, funcionario);
+    }
+
+    @Override
+    public void editarSenha(Funcionario funcionario, String novaSenha) {
+        if (funcionario == null || novaSenha == null || novaSenha.isEmpty()) {
+            throw new IllegalArgumentException("Funcionário ou senha inválidos.");
+        }
+        if (!funcionariosAtivos.contains(funcionario)) {
+            throw new IllegalArgumentException("Funcionário não encontrado.");
+        }
+        funcionario.setSenha(novaSenha);
+    }
+
+    @Override
+    public Funcionario obterPorNome(String nome) {
+        if (nome == null || nome.isEmpty()) {
+            throw new IllegalArgumentException("Nome inválido.");
+        }
+        for (Funcionario funcionario : funcionariosAtivos) {
+            if (funcionario.getNome().equalsIgnoreCase(nome)) {
+                return funcionario;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Funcionario obterPorId(int id) {
         for (Funcionario funcionario : funcionariosAtivos) {
             if (funcionario.getId() == id) {
                 return funcionario;
@@ -35,54 +103,22 @@ public class RepositorioFuncionarios {
         return null;
     }
 
-    public void modificarNomeFuncionario(Funcionario funcionario, String novoNome) {
-        if (funcionario == null || novoNome == null || novoNome.isEmpty()) {
-            throw new IllegalArgumentException("Funcionário ou nome não podem ser nulos ou vazios.");
+    @Override
+    public Funcionario obterPorEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email inválido.");
         }
-        if (!funcionariosAtivos.contains(funcionario)) {
-            throw new IllegalArgumentException("Funcionário não encontrado.");
-        }
-        funcionario.setNome(novoNome);
+        return funcionariosPorEmail.get(email);
     }
 
-    public void modificarEmailFuncionario(Funcionario funcionario, String novoEmail) {
-        if (funcionario == null || novoEmail == null || novoEmail.isEmpty()) {
-            throw new IllegalArgumentException("Funcionário ou email não podem ser nulos ou vazios.");
-        }
-
-        if (!funcionariosAtivos.contains(funcionario)) {
-            throw new IllegalArgumentException("Funcionário não encontrado.");
-        }
-
-        funcionariosPorEmail.remove(funcionario.getEmail());
-        funcionario.setEmail(novoEmail);
-        funcionariosPorEmail.put(novoEmail, funcionario);
-    }
-
-    public void modificarSenhaFuncionario(Funcionario funcionario, String novaSenha) {
-        if (funcionario == null || novaSenha == null || novaSenha.isEmpty()) {
-            throw new IllegalArgumentException("Funcionário ou senha não podem ser nulos ou vazios.");
-        }
-        if (!funcionariosAtivos.contains(funcionario)) {
-            throw new IllegalArgumentException("Funcionário não encontrado.");
-        }
-        funcionario.setSenha(novaSenha);
-    }
-    
+    // Método útil adicional
     public List<Funcionario> obterTodosFuncionarios() {
         return new ArrayList<>(funcionariosAtivos);
     }
 
-    public void removerFuncionario(Funcionario funcionario) {
-        if (!funcionariosAtivos.contains(funcionario)) {
-            throw new IllegalArgumentException("Funcionário não encontrado.");
-        }
-        funcionariosAtivos.remove(funcionario);
-        funcionariosPorEmail.remove(funcionario.getEmail());
-    }
     public Funcionario autenticarFuncionario(String email, String senha) {
         if (email == null || senha == null || email.isEmpty() || senha.isEmpty()) {
-            throw new IllegalArgumentException("Email e senha não podem ser nulos ou vazios.");
+            throw new IllegalArgumentException("Email e senha não podem ser vazios.");
         }
         Funcionario funcionario = funcionariosPorEmail.get(email);
         if (funcionario == null || !funcionario.getSenha().equals(senha)) {
@@ -91,34 +127,23 @@ public class RepositorioFuncionarios {
         return funcionario;
     }
 
-    public void inicializarGerentePadrao() {
-    Funcionario gerentePadrao = new Funcionario(
-            "adm",
-            "adm",
-            "adm",
-            true 
-        );
-
-        try {
-            adicionarFuncionario(gerentePadrao);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Gerente padrão já existente.");
-        }
-    }
-
-    public Funcionario buscarporEmail(String email){
-        for (Funcionario funcionario : funcionariosAtivos) {
-            if (funcionario.getEmail().equals(email)) {
-                return funcionario;
-            }
-        }
-        return null;
-    }
-
     public void modificarStatusGerente(Funcionario funcionario, boolean novoStatus) {
         if (!funcionariosAtivos.contains(funcionario)) {
             throw new IllegalArgumentException("Funcionário não encontrado.");
         }
         funcionario.setEhGerente(novoStatus);
+    }
+
+    public void inicializarGerentePadrao() {
+        Funcionario gerentePadrao = new Funcionario("adm", "adm", "adm", true);
+        try {
+            cadastrar(gerentePadrao);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Gerente padrão já existente.");
+        }
+    }
+
+    public Funcionario buscarPorEmail(String email) {
+        return funcionariosPorEmail.get(email);
     }
 }
