@@ -47,7 +47,7 @@ public class Sessao {
         if (!assentoDisponivel(assento.getCoordenada())) {
             return false;
         }
-        assento.ocupar();
+        assento.setOcupado();
         assentosOcupados.add(assento);
         if (!publico.contains(cliente)) {
             publico.add(cliente);

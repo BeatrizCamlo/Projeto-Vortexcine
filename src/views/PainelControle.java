@@ -4,20 +4,18 @@ import java.util.Scanner;
 
 import entities.Cliente;
 import entities.Funcionario;
+import exceptions.CampoInvalido;
+import services.*;
 import repositories.*;
 
 public class PainelControle {
     private final Scanner scanner = new Scanner(System.in);
-    private final RepositorioClientes repositorioClientes = new RepositorioClientes();
-    private final RepositorioFilmes repositorioFilmes = new RepositorioFilmes();
-    private final RepositorioFuncionarios repositorioFuncionarios = new RepositorioFuncionarios();
-    private final RepositorioSessao repositorioSessao = new RepositorioSessao();
-    private final RepositorioSalas repositorioSalas = new RepositorioSalas();
-
-    public PainelControle() {
-        repositorioSalas.inicializarAssentos();
-        
-    }
+    private final ClienteService clienteService = new ClienteService(new RepositorioClientes());
+    private final FuncionarioService funcionarioService = new FuncionarioService(new RepositorioFuncionarios());
+    private final FilmeService filmeService = new FilmeService(new RepositorioFilmes());
+    private final SessaoService sessaoService = new SessaoService(new RepositorioSessao());
+    private final SalaService salaService = new SalaService(new RepositorioSalas());
+    private final IngressoService ingressoService = new IngressoService(new RepositorioIngressos());
 
     public void mostrarRecepcao() {
         System.out.println("██╗   ██╗ ██████╗ ██████╗ ████████╗███████╗██╗   ██╗██████╗██╗███╗   ██╗███████╗");
@@ -29,9 +27,6 @@ public class PainelControle {
         System.out.println();
         System.out.println("                     V O R T E X  C I N E  🎬");
         System.out.println("                   Bem-vindo ao seu universo de filmes!");
-
-        repositorioFuncionarios.inicializarGerentePadrao();
-        repositorioFilmes.popularFilmesIniciais();
     }
 
     public void iniciarSistema() {
@@ -52,7 +47,7 @@ public class PainelControle {
 
             switch (opcao) {
                 case 1: loginCliente(); break;
-                case 2: cadastrarCliente(); break;
+                case 2: cadastrarNovoCliente(); break;
                 case 3: loginFuncionario(); break;
                 case 0: {
                     System.out.println("Encerrando o sistema.");
@@ -63,7 +58,7 @@ public class PainelControle {
         }
     }
 
-    private void cadastrarCliente() {
+    private void cadastrarNovoCliente() {
         System.out.println("\n======== Cadastro Cliente ========");
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
@@ -72,16 +67,13 @@ public class PainelControle {
         System.out.print("Senha: ");
         String senha = scanner.nextLine();
 
-        if (repositorioClientes.obterPorEmail(email) != null) {
-            System.out.println("Já existe um cliente com esse email.");
-            return;
+        try {
+            Cliente novoCliente = new Cliente(nome, email, senha);
+            clienteService.cadastrarCliente(novoCliente);
+            System.out.println("Cadastro realizado com sucesso!");
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
         }
-
-
-        Cliente novoCliente = new Cliente(nome, email, senha);
-        repositorioClientes.cadastrar(novoCliente);
-
-        System.out.println("Cadastro realizado com sucesso!");
     }
 
     private void loginCliente() {
@@ -90,10 +82,10 @@ public class PainelControle {
         System.out.print("Senha: ");
         String senha = scanner.nextLine();
 
-        Cliente clienteLogado = repositorioClientes.autenticarCliente(email, senha);
+        Cliente clienteLogado = clienteService.autenticar(email, senha);
         if (clienteLogado != null) {
             System.out.println("Login realizado com sucesso!");
-            MenuCliente menuCliente = new MenuCliente(scanner, repositorioClientes, repositorioFilmes, repositorioSessao, repositorioSalas);
+            MenuCliente menuCliente = new MenuCliente(scanner, clienteLogado, clienteService, filmeService, sessaoService, salaService, null);
             menuCliente.exibirMenu();
         } else {
             System.out.println("Credenciais inválidas.");
@@ -106,15 +98,17 @@ public class PainelControle {
         System.out.print("Senha: ");
         String senha = scanner.nextLine();
 
-        Funcionario funcionarioLogado = repositorioFuncionarios.autenticarFuncionario(email, senha);
+        Funcionario funcionarioLogado = funcionarioService.autenticar(email, senha);
         if (funcionarioLogado != null) {
             System.out.println("Login realizado com sucesso!");
             MenuFuncionario menuFuncionario = new MenuFuncionario(
                 scanner,
                 funcionarioLogado,
-                repositorioFilmes,
-                repositorioFuncionarios,
-                repositorioClientes
+                filmeService,
+                funcionarioService,
+                clienteService,
+                salaService,
+                sessaoService
             );
             menuFuncionario.exibirMenu();
         } else {

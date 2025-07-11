@@ -1,11 +1,11 @@
 package entities;
 
 public class Ingresso {
-    private Sessao sessao;
-    private Assento assento;
-    private Cliente cliente;
-    private TipoIngresso tipo;
-    private double preco;
+    private final Sessao sessao;
+    private final Assento assento;
+    private final Cliente cliente;
+    private final TipoIngresso tipo;
+    private final double preco;
 
     public Ingresso(Sessao sessao, Assento assento, Cliente cliente, TipoIngresso tipo, double preco) {
         this.sessao = sessao;
@@ -27,12 +27,12 @@ public class Ingresso {
         return cliente;
     }
 
-    public double getPreco() {
-        return preco;
-    }
-
     public TipoIngresso getTipo() {
         return tipo;
+    }
+
+    public double getPreco() {
+        return preco;
     }
 
     public void exibirInformacoes() {
@@ -42,7 +42,7 @@ public class Ingresso {
         System.out.println("Sala: " + sessao.getSala().getNumeroSala());
         System.out.println("Assento: " + assento.getCoordenada());
         System.out.println("Tipo: " + tipo);
-        System.out.println("Preço: R$ " + preco);
+        System.out.printf("Preço: R$ %.2f\n", preco);
         System.out.println("Cliente: " + cliente.getNome());
     }
 }

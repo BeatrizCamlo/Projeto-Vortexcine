@@ -2,46 +2,35 @@ package repositories;
 import java.util.HashMap;
 import entities.Assento;
 import entities.Cliente;
-import exceptions.*;
 
 public class RepositorioAssentos {
-    private HashMap<Cliente, Assento> assentosOcupados;
+    private HashMap<Cliente, Assento> assentosOcupados = new HashMap<>();
 
-    public RepositorioAssentos() {
-        this.assentosOcupados = new HashMap<>();
-    }
-
-    public void ocuparAssento(Cliente cliente, Assento assento){
-        if (cliente == null || assento == null) {
-            throw new CampoInvalido("Cliente ou Assento não podem ser nulos.");
-        }
-        if (assentosOcupados.containsKey(cliente)) {
-            throw new CampoInvalido("Assento já reservado para este cliente.");
-        }
+    public void adicionar(Cliente cliente, Assento assento) {
         assentosOcupados.put(cliente, assento);
     }
 
-    public boolean isAssentoOcupado(Assento assento) {
-        if (assento == null) {
-            throw new CampoInvalido("Assento não pode ser nulo.");
-        }
+    public boolean existeReserva(Cliente cliente) {
+        return assentosOcupados.containsKey(cliente);
+    }
+
+    public boolean assentoJaReservado(Assento assento) {
         return assentosOcupados.containsValue(assento);
     }
 
-    public void desocuparAssento(Cliente cliente) {
-        if (cliente == null) {
-            throw new CampoInvalido("Cliente não pode ser nulo.");
-        }
-        if (!assentosOcupados.containsKey(cliente)) {
-            throw new CampoInvalido("Assento não encontrado para este cliente.");
-        }
+    public Assento remover(Cliente cliente) {
+        return assentosOcupados.remove(cliente);
     }
 
-    public void limparAssentos() {
+    public Assento obterAssentoPorCliente(Cliente cliente) {
+        return assentosOcupados.get(cliente);
+    }
+
+    public HashMap<Cliente, Assento> listarReservas() {
+        return new HashMap<>(assentosOcupados);
+    }
+
+    public void limparTudo() {
         assentosOcupados.clear();
-    }
-
-    public HashMap<Cliente, Assento> getAssentosOcupados() {
-        return assentosOcupados;
     }
 }

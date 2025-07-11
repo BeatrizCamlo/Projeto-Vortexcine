@@ -15,10 +15,6 @@ public class Cliente extends Pessoa {
         return ingressos;
     }
 
-    public void adicionarIngresso(Ingresso ingresso){
-        ingressos.add(ingresso);
-    }
-
     public void listarIngressos(){
         for(int i = 0; i <= ingressos.size(); i++){
             System.err.println("- " + ingressos.get(i));

@@ -40,12 +40,18 @@ public class Sala {
         return sessoes;
     }
 
-    public void adicionarSessao(Sessao sessao) {
-        sessoes.add(sessao);
+    public Assento buscarAssento(String linha, int coluna) {
+        for (Assento assento : assentos) {
+            if (assento.getCoordenada().getLinha().equalsIgnoreCase(linha)
+                    && assento.getCoordenada().getColuna() == coluna) {
+                return assento;
+            }
+        }
+        return null;
     }
 
     public void exibirAssentos() {
-        for (int i = 0; i <= assentos.size(); i++) {
+        for (int i = 0; i < assentos.size(); i++) {
             assentos.get(i).exibirInformacoesAssento();
         }
     }

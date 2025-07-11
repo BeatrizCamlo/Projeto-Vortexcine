@@ -1,6 +1,6 @@
 package views;
 
-import repositories.*;
+import services.*;
 import entities.*;
 import exceptions.*;
 import java.util.Scanner;
@@ -8,25 +8,46 @@ import java.util.Scanner;
 public class MenuFuncionario {
 
     private final Scanner scanner;
-    private final RepositorioFilmes repositorioFilmes;
-    private final RepositorioFuncionarios repositorioFuncionarios;
-    private final RepositorioClientes repositorioClientes;
+    private final FilmeService filmeService;
+    private final FuncionarioService funcionarioService;
+    private final ClienteService clienteService;
+    private final SalaService salaService;
+    private final SessaoService sessaoService;
     private Funcionario funcionarioLogado;
 
     public MenuFuncionario(
         Scanner scanner,
         Funcionario funcionarioLogado,
-        RepositorioFilmes repositorioFilmes,
-        RepositorioFuncionarios repositorioFuncionarios,
-        RepositorioClientes repositorioClientes
+        FilmeService filmeService,
+        FuncionarioService funcionarioService,
+        ClienteService clienteService,
+        SalaService salaService,
+        SessaoService sessaoService
+        
     ) {
         this.scanner = scanner;
         this.funcionarioLogado = funcionarioLogado;
-        this.repositorioFilmes = repositorioFilmes;
-        this.repositorioFuncionarios = repositorioFuncionarios;
-        this.repositorioClientes = repositorioClientes;
+        this.filmeService = filmeService;
+        this.funcionarioService = funcionarioService;
+        this.clienteService = clienteService;
+        this.salaService = salaService;
+        this.sessaoService = sessaoService;
     }
 
+    // talvez fazer um GerenciarFilme separado para reduzir esse menu do funcionário
+    /*
+     *      System.out.println("\n====== Menu Funcionário ======");
+            System.out.println("1. Gerenciar Filmes");
+            if (funcionarioLogado.ehGerente()) {
+                System.out.println("2. Gerenciar Clientes");
+                System.out.println("3. Gerenciar Funcionários");
+            }
+            System.out.println("4. Criar sala");
+            System.out.println("5. Criar sessão");
+            System.out.println("6. Exibir todas as Sessões");
+            System.out.println("0. Deslogar");
+            System.out.print("Opção: ");
+     */
     public void exibirMenu() {
         int opcao;
         do {
@@ -40,7 +61,9 @@ public class MenuFuncionario {
                 System.out.println("5. Gerenciar Clientes");
                 System.out.println("6. Gerenciar Funcionários");
             }
-
+            System.out.println("7. Criar sala");
+            System.out.println("8. Criar sessão");
+            System.out.println("9. Exibir todas as Sessões");
             System.out.println("0. Deslogar");
             System.out.print("Opção: ");
             opcao = Integer.parseInt(scanner.nextLine());
@@ -48,7 +71,7 @@ public class MenuFuncionario {
             switch (opcao) {
                 case 1: cadastrarFilme(); break;
                 case 2: atualizarFilme(); break;
-                case 3: visualizarFilmes(); break;
+                case 3: mostrarFilmesEmCartaz(); break;
                 case 4: deletarFilmes(); break;
                 case 5: {
                     if (funcionarioLogado.ehGerente()) {
@@ -60,6 +83,9 @@ public class MenuFuncionario {
                         gerenciarFuncionarios();
                     }
                 } break;
+                case 7: criarSala(); break;
+                case 8: criarSessao(); break;
+                case 9: visualizarSessoes(); break;
                 case 0: funcionarioLogado = null; break;
                 default: System.out.println("Opção inválida."); break;
             }
@@ -67,6 +93,7 @@ public class MenuFuncionario {
     }
 
 
+    // Parte do Cliente
     private void gerenciarClientes() {
         int opcao;
         do {
@@ -89,40 +116,54 @@ public class MenuFuncionario {
     }
 
     private void listarClientes() {
-        var clientes = repositorioClientes.obterTodosClientes();
-        if (clientes.isEmpty()) {
-            System.out.println("Nenhum cliente cadastrado.");
-            return;
-        }
+        var clientes = clienteService.obterTodosClientes();
+            if (clientes.isEmpty()) {
+                System.out.println("Nenhum cliente cadastrado.");
+                return;
+            }
         clientes.forEach(cliente -> cliente.exibirInformacoes());
     }
 
     private void editarCliente() {
         System.out.print("Digite o email do cliente a ser editado: ");
         String email = scanner.nextLine();
-        var cliente = repositorioClientes.obterPorEmail(email);
 
-        if (cliente == null) {
-            System.out.println("Cliente não encontrado.");
+        Cliente cliente;
+        try {
+            cliente = clienteService.buscarPorEmail(email);
+        } catch (CampoInvalido e) {
+            System.out.println(e.getMessage());
             return;
         }
 
         System.out.print("Novo nome (Enter para manter): ");
         String novoNome = scanner.nextLine();
         if (!novoNome.isBlank()) {
-            repositorioClientes.editarNome(cliente, novoNome);
+            try {
+                clienteService.editarNome(cliente, novoNome);
+            } catch (CampoInvalido e) {
+                System.out.println("Erro ao editar nome: " + e.getMessage());
+            }
         }
 
         System.out.print("Novo email (Enter para manter): ");
         String novoEmail = scanner.nextLine();
         if (!novoEmail.isBlank()) {
-            repositorioClientes.editarEmail(cliente, novoEmail);
+            try {
+                clienteService.editarEmail(cliente, novoEmail);
+            } catch (CampoInvalido e) {
+                System.out.println("Erro ao editar email: " + e.getMessage());
+            }
         }
 
         System.out.print("Nova senha (Enter para manter): ");
         String novaSenha = scanner.nextLine();
         if (!novaSenha.isBlank()) {
-            repositorioClientes.editarSenha(cliente, novaSenha);
+            try {
+                clienteService.editarSenha(cliente, novaSenha);
+            } catch (CampoInvalido e) {
+                System.out.println("Erro ao editar senha: " + e.getMessage());
+            }
         }
 
         System.out.println("Cliente atualizado com sucesso.");
@@ -131,16 +172,17 @@ public class MenuFuncionario {
     private void removerCliente() {
         System.out.print("Digite o email do cliente a ser removido: ");
         String email = scanner.nextLine();
-        var cliente = repositorioClientes.obterPorEmail(email);
-        if (cliente != null) {
-            repositorioClientes.remover(cliente);
+
+        try {
+            Cliente cliente = clienteService.buscarPorEmail(email);
+            clienteService.removerCliente(cliente);
             System.out.println("Cliente removido com sucesso.");
-        } else {
-            System.out.println("Cliente não encontrado.");
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
-
+    // Parte do Funcionário
     private void gerenciarFuncionarios() {
         int opcao;
         do {
@@ -165,7 +207,7 @@ public class MenuFuncionario {
     }
 
     private void listarFuncionarios() {
-        var funcionarios = repositorioFuncionarios.obterTodosFuncionarios();
+        var funcionarios = funcionarioService.obterTodosClientes();
         if (funcionarios.isEmpty()) {
             System.out.println("Nenhum funcionário cadastrado.");
             return;
@@ -181,11 +223,6 @@ public class MenuFuncionario {
         System.out.print("Senha: ");
         String senha = scanner.nextLine();
 
-        if (repositorioFuncionarios.obterPorEmail(email) != null) {
-            System.out.println("Já existe um funcionário com esse email.");
-            return;
-        }
-
         boolean isGerente = false;
         while (true) {
             System.out.print("É gerente? (s/n): ");
@@ -200,83 +237,116 @@ public class MenuFuncionario {
             }
         }
 
-        Funcionario novo = new Funcionario(nome, email, senha, isGerente);
-        repositorioFuncionarios.cadastrar(novo);
-        System.out.println("Funcionário cadastrado com sucesso.");
+        Funcionario novoFuncionario = new Funcionario(nome, email, senha, isGerente);
+        try {
+            funcionarioService.cadastrarFuncionario(novoFuncionario);
+            System.out.println("Funcionário cadastrado com sucesso.");
+        } catch (CampoInvalido e) {
+            System.out.println("Erro ao cadastrar: " + e.getMessage());
+        }
     }
 
     private void removerFuncionario() {
         System.out.print("Email do funcionário a remover: ");
         String email = scanner.nextLine();
-        var funcionario = repositorioFuncionarios.buscarPorEmail(email);
-        if (funcionario != null) {
-            repositorioFuncionarios.remover(funcionario);
+
+        try {
+            Funcionario funcionario = funcionarioService.buscarPorEmail(email);
+            funcionarioService.removerFuncionario(funcionario);
             System.out.println("Funcionário removido com sucesso.");
-        } else {
-            System.out.println("Funcionário não encontrado.");
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
     private void editarFuncionarios() {
         System.out.print("Email do funcionário a editar: ");
         String email = scanner.nextLine();
-        var funcionario = repositorioFuncionarios.obterPorEmail(email);
-        if (funcionario == null) {
-            System.out.println("Funcionário não encontrado.");
+
+        Funcionario funcionario;
+        try {
+            funcionario = funcionarioService.buscarPorEmail(email);
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
             return;
         }
 
         System.out.print("Novo nome (Enter para manter): ");
         String novoNome = scanner.nextLine();
         if (!novoNome.isBlank()) {
-            repositorioFuncionarios.editarNome(funcionario, novoNome);
+            try {
+                funcionarioService.editarNome(funcionario, novoNome);
+            } catch (CampoInvalido e) {
+                System.out.println("Erro ao editar nome: " + e.getMessage());
+            }
         }
 
         System.out.print("Novo email (Enter para manter): ");
         String novoEmail = scanner.nextLine();
         if (!novoEmail.isBlank()) {
-            repositorioFuncionarios.editarEmail(funcionario, novoEmail);
+            try {
+                funcionarioService.editarEmail(funcionario, novoEmail);
+            } catch (CampoInvalido e) {
+                System.out.println("Erro ao editar email: " + e.getMessage());
+            }
         }
 
         System.out.print("Nova senha (Enter para manter): ");
         String novaSenha = scanner.nextLine();
         if (!novaSenha.isBlank()) {
-            repositorioFuncionarios.editarSenha(funcionario, novaSenha);
+            try {
+                funcionarioService.editarSenha(funcionario, novaSenha);
+            } catch (CampoInvalido e) {
+                System.out.println("Erro ao editar senha: " + e.getMessage());
+            }
         }
 
-        System.out.print("Alterar status de gerente? (s/n): ");
-        String resposta = scanner.nextLine().trim().toLowerCase();
-        if (resposta.equals("s")) {
-            repositorioFuncionarios.modificarStatusGerente(funcionario, !funcionario.ehGerente());
-            System.out.println("Status de gerente alterado.");
+        System.out.print("Novo status de gerente (s para gerente / n para comum / Enter para manter): ");
+        String status = scanner.nextLine().trim().toLowerCase();
+        if (status.equals("s")) {
+            funcionarioService.promoverOuRebaixarGerente(funcionario, true);
+            System.out.println("Funcionário promovido a gerente.");
+        } else if (status.equals("n")) {
+            funcionarioService.promoverOuRebaixarGerente(funcionario, false);
+            System.out.println("Funcionário rebaixado de gerente.");
         }
 
         System.out.println("Funcionário atualizado com sucesso.");
     }
 
+    //Parte dos Filmes
     private void cadastrarFilme() {
         System.out.println("====== Cadastrar Filme ======");
         System.out.print("Nome do Filme: ");
         String nome = scanner.nextLine();
 
         System.out.print("Duração (em minutos): ");
-        int duracao = Integer.parseInt(scanner.nextLine());
+        int duracao;
+        try {
+            duracao = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Duração inválida.");
+            return;
+        }
 
         System.out.print("Gênero: ");
         String generoStr = scanner.nextLine().toUpperCase();
 
-        GeneroFilme genero = null;
+        GeneroFilme genero;
         try {
             genero = GeneroFilme.valueOf(generoStr);
-        } catch (CampoInvalido e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Gênero inválido.");
             return;
         }
 
         Filme filme = new Filme(nome, duracao, genero);
-        repositorioFilmes.adicionarFilme(funcionarioLogado, filme);
-
-        System.out.println("Filme cadastrado com sucesso!");
+        try {
+            filmeService.adicionarFilme(funcionarioLogado, filme);
+            System.out.println("Filme cadastrado com sucesso!");
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
     }
 
     private void atualizarFilme() {
@@ -284,16 +354,26 @@ public class MenuFuncionario {
         System.out.print("Digite o nome do filme: ");
         String nome = scanner.nextLine();
 
-        Filme filme = repositorioFilmes.obterFilmePorNome(nome);
-        if (filme == null) {
-            System.out.println("Filme não encontrado.");
+        Filme filme;
+        try {
+            filme = filmeService.obterPorNome(nome);
+            if (filme == null) {
+                System.out.println("Filme não encontrado.");
+                return;
+            }
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
             return;
         }
 
         System.out.print("Novo nome (Enter para manter): ");
         String novoNome = scanner.nextLine();
         if (!novoNome.isBlank()) {
-            repositorioFilmes.modificarNomeFilme(funcionarioLogado, filme, novoNome);
+            try {
+                filmeService.modificarNome(funcionarioLogado, filme, novoNome);
+            } catch (CampoInvalido e) {
+                System.out.println("Erro ao alterar nome: " + e.getMessage());
+            }
         }
 
         System.out.print("Novo gênero (Enter para manter): ");
@@ -301,9 +381,11 @@ public class MenuFuncionario {
         if (!novoGenero.isBlank()) {
             try {
                 GeneroFilme genero = GeneroFilme.valueOf(novoGenero.toUpperCase());
-                repositorioFilmes.modificarGeneroFilme(funcionarioLogado, filme, genero);
-            } catch (CampoInvalido e) {
+                filmeService.modificarGenero(funcionarioLogado, filme, genero);
+            } catch (IllegalArgumentException e) {
                 System.out.println("Gênero inválido. Gênero não alterado.");
+            } catch (CampoInvalido e) {
+                System.out.println("Erro ao alterar gênero: " + e.getMessage());
             }
         }
 
@@ -312,9 +394,11 @@ public class MenuFuncionario {
         if (!duracaoStr.isBlank()) {
             try {
                 int novaDuracao = Integer.parseInt(duracaoStr);
-                repositorioFilmes.modificarDuracaoFilme(funcionarioLogado, filme, novaDuracao);
+                filmeService.modificarDuracao(funcionarioLogado, filme, novaDuracao);
             } catch (NumberFormatException e) {
                 System.out.println("Duração inválida. Duração não alterada.");
+            } catch (CampoInvalido e) {
+                System.out.println("Erro ao alterar duração: " + e.getMessage());
             }
         }
 
@@ -326,22 +410,108 @@ public class MenuFuncionario {
         System.out.print("Digite o nome do filme: ");
         String nome = scanner.nextLine();
 
-        Filme filme = repositorioFilmes.obterFilmePorNome(nome);
-        if (filme != null) {
-            repositorioFilmes.removerFilme(funcionarioLogado, filme);
+        try {
+            Filme filme = filmeService.obterPorNome(nome);
+            filmeService.removerFilme(funcionarioLogado, filme);
             System.out.println("Filme removido com sucesso.");
-        } else {
-            System.out.println("Filme não encontrado.");
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
-    private void visualizarFilmes() {
-        System.out.println("====== Filmes Cadastrados ======");
-        var filmes = repositorioFilmes.obterTodosFilmes();
+    private void mostrarFilmesEmCartaz() {
+        System.out.println(" ====== Filmes em Exibição ======");
+        var filmes = filmeService.obterTodosFilmes();
+        
         if (filmes.isEmpty()) {
-            System.out.println("Nenhum filme cadastrado.");
+            System.out.println("Nenhum filme encontrado.");
         } else {
-            filmes.forEach(Filme::exibirInformacoes);
+            for (Filme filme : filmes) {
+                String nome = filme.getNome();
+                int duracao = filme.getDuracaoEmMinutos();
+                String genero = filme.getGenero().toString();
+
+                System.out.println("╔═══════════════════════════════════════╗");
+                System.out.printf("║ Nome    : %-27s ║%n", nome);
+                System.out.printf("║ Duração : %-27s ║%n", duracao + " min");
+                System.out.printf("║ Gênero  : %-27s ║%n", genero);
+                System.out.println("╚═══════════════════════════════════════╝");
+                System.out.println();
+            }
         }
     }
+
+    // Parte da Sala
+
+    private void criarSala() {
+        System.out.println("====== Criar Sala ======");
+        
+        try {
+            System.out.print("Número da sala: ");
+            int numero = Integer.parseInt(scanner.nextLine());
+
+            Sala novaSala = new Sala(numero);
+            salaService.cadastrarSala(novaSala);
+            System.out.println("Sala cadastrada com sucesso.");
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: número inválido.");
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+    // Parte das Sessões
+
+    private void criarSessao() {
+        System.out.println("====== Criar Sessão ======");
+
+        try {
+            // Buscar o filme
+            System.out.print("Nome do filme: ");
+            String nomeFilme = scanner.nextLine();
+            Filme filme = filmeService.obterPorNome(nomeFilme);
+            if (filme == null) {
+                System.out.println("Filme não encontrado.");
+                return;
+            }
+
+            System.out.print("Número da sala: ");
+            int numeroSala = Integer.parseInt(scanner.nextLine());
+            Sala sala = salaService.buscarSalaPorNumero(numeroSala);
+            if (sala == null) {
+                System.out.println("Sala não encontrada.");
+                return;
+            }
+
+            System.out.print("Data e hora da sessão (formato livre): ");
+            String dataHora = scanner.nextLine();
+            if (dataHora.isBlank()) {
+                System.out.println("Data e hora não podem estar vazias.");
+                return;
+            }
+
+            Sessao novaSessao = new Sessao(filme, sala, dataHora);
+
+            sessaoService.criarSessao(novaSessao);
+
+            salaService.associarSessaoASala(sala, novaSessao);
+
+            System.out.println("Sessão criada com sucesso.");
+
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: número inválido.");
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
+    private void visualizarSessoes() {
+        System.out.println("====== Sessões Cadastradas ======");
+        try {
+            sessaoService.exibirSessoes();
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
 }

@@ -17,7 +17,7 @@ public class Assento {
         return ocupado;
     }
 
-    public void ocupar() {
+    public void setOcupado() {
         ocupado = true;
     }
 

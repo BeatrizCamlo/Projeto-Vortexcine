@@ -1,58 +1,51 @@
 package repositories;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import entities.Sala;
 import entities.Sessao;
-import exceptions.*;
 
 public class RepositorioSalas {
     private List<Sala> salasTotais;
     private HashMap<Sessao, Sala> salasPorSessao;
-    private char[][] assentosSalaPadrao;
-
 
     public RepositorioSalas() {
-        salasTotais = new ArrayList<>();
-        salasPorSessao = new HashMap<>();
+        this.salasTotais = new ArrayList<>();
+        this.salasPorSessao = new HashMap<>();
     }
 
-    public void ocuparSalaComSessao(Sala sala, Sessao sessao) {
-        if (sala == null || sessao == null) {
-            throw new CampoInvalido("Sala ou sessão não podem ser nulos.");
-        }
-        if (!salasTotais.contains(sala)) {
-            throw new CampoInvalido("Sala não encontrada.");
-        }
-        if (!salasPorSessao.containsKey(sessao)) {
-            salasPorSessao.put(sessao, sala);
-        } else {
-           throw new CampoInvalido("Sessão já está ocupada em outra sala.");
-        }
+    public void adicionar(Sala sala) {
+        salasTotais.add(sala);
     }
 
-    public Sala buscarSalaPorSessao(Sessao sessao) {
-        if (sessao == null) {
-            throw new CampoInvalido("Sessão não pode ser nula.");
-        }
-        return  salasPorSessao.get(sessao);
+    public void associarSessao(Sala sala, Sessao sessao) {
+        salasPorSessao.put(sessao, sala);
     }
-    
-     public void inicializarAssentos() {
-        assentosSalaPadrao = new char[10][10];
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                assentosSalaPadrao[i][j] = 'A'; // 'A' representa assento livre
+
+    public Sala buscarPorSessao(Sessao sessao) {
+        return salasPorSessao.get(sessao);
+    }
+
+    public boolean contem(Sala sala) {
+        return salasTotais.contains(sala);
+    }
+
+    public List<Sala> obterTodas() {
+        return new ArrayList<>(salasTotais);
+    }
+
+    public boolean sessaoJaAssociada(Sessao sessao) {
+        return salasPorSessao.containsKey(sessao);
+    }
+
+    public Sala buscarPorNumero(int numero) {
+        for (Sala sala : salasTotais) {
+            if (sala.getNumeroSala() == numero) {
+                return sala;
             }
         }
+        return null;
     }
-
-     public char[][] getAssentosSalaPadrao() {
-        return assentosSalaPadrao;
-    }
-
-    public void setAssentosSalaPadrao(char[][] assentosAtualizados) {
-        this.assentosSalaPadrao = assentosAtualizados;
-    }
-    
 }

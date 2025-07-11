@@ -1,42 +1,47 @@
 package views;
 
-import repositories.*;
+import services.*;
 import entities.*;
-
+import exceptions.CampoInvalido;
 import java.util.Scanner;
 
 public class MenuCliente {
     private final Scanner scanner;
-    private final RepositorioClientes repositorioClientes;
-    private final RepositorioFilmes repositorioFilmes;
-    private final RepositorioSessao repositorioSessoes;
-    private final RepositorioSalas repositorioSalas;
-
     private Cliente clienteLogado;
+    private final ClienteService clienteService;
+    private final FilmeService filmeService;
+    private final SessaoService sessaoService;
+    private final SalaService salaService;
+    private final IngressoService ingressoService;
 
     public MenuCliente(
         Scanner scanner,
-        RepositorioClientes repositorioClientes,
-        RepositorioFilmes repositorioFilmes,
-        RepositorioSessao repositorioSessoes,
-        RepositorioSalas repositorioSalas
+        Cliente clienteLogado,
+        ClienteService clienteService,
+        FilmeService filmeService,
+        SessaoService sessaoService,
+        SalaService salaService,
+        IngressoService ingressoService
     ) {
         this.scanner = scanner;
-        this.repositorioClientes = repositorioClientes;
-        this.repositorioFilmes = repositorioFilmes;
-        this.repositorioSessoes = repositorioSessoes;
-        this.repositorioSalas = repositorioSalas;
+        this.clienteLogado = clienteLogado;
+        this.clienteService = clienteService;
+        this.filmeService = filmeService;
+        this.sessaoService = sessaoService;
+        this.salaService = salaService;
+        this.ingressoService = ingressoService;
     }
 
     public void exibirMenu() {
         int opcao;
         do {
-            System.out.println("\n====== Menu Cliente ======");
-            System.out.println("1. Comprar Ingresso");
-            System.out.println("2. Visualizar Filmes em Cartaz");
-            System.out.println("3. Meus Ingressos");
-            System.out.println("0. Deslogar");
-            System.out.print("Opção: ");
+            System.out.println("\n===== Menu Cliente =====");
+            System.out.println("1 - Comprar ingresso");
+            System.out.println("2 - Visualizar filmes em cartaz");
+            System.out.println("3 - Meus ingressos");
+            System.out.println("0 - Logout");
+            System.out.print("Escolha uma opção: ");
+
             opcao = Integer.parseInt(scanner.nextLine());
 
             switch (opcao) {
@@ -49,76 +54,100 @@ public class MenuCliente {
         } while (opcao != 0);
     }
 
-    public void cadastrar() {
-        System.out.println("\n======== Cadastro Cliente ========");
-        System.out.print("Nome: ");
-        String nome = scanner.nextLine();
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-        System.out.print("Senha: ");
-        String senha = scanner.nextLine();
-
-        if (repositorioClientes.obterPorEmail(email) != null) {
-            System.out.println("Já existe um cliente com esse email.");
-            return;
-        }
-
-        Cliente cliente = new Cliente(nome, email, senha);
-        repositorioClientes.cadastrar(cliente);
-        System.out.println("Cadastro realizado com sucesso!");
-    }
-
     private void comprarIngresso() {
-        System.out.println("==== Compra de Ingresso ====");
-        // mostrarAssentos();
-        //reservarAssento();
-    }
+        try {
+            mostrarFilmesEmCartaz();
 
-    private void mostrarAssentos() {
-        char[][] assentos = repositorioSalas.getAssentosSalaPadrao();
-        System.out.println("\nAssentos (A = livre, X = ocupado):");
-        System.out.print("    ");
-        for (int j = 1; j <= 10; j++) {
-            System.out.printf("%-4d", j);
-        }
-        System.out.println();
-        for (int i = 0; i < 10; i++) {
-            char letraLinha = (char) ('A' + i);
-            System.out.print(letraLinha + "   ");
-            for (int j = 0; j < 10; j++) {
-                System.out.print("[" + assentos[i][j] + "] ");
+            System.out.print("Digite o nome do filme para escolher a sessão: ");
+            String nomeFilme = scanner.nextLine();
+
+            var sessoes = sessaoService.buscarSessoesPorFilme(nomeFilme);
+            if (sessoes.isEmpty()) {
+                System.out.println("Nenhuma sessão encontrada para esse filme.");
+                return;
             }
-            System.out.println();
+
+            System.out.println("Selecione a sessão:");
+            for (int i = 0; i < sessoes.size(); i++) {
+                Sessao s = sessoes.get(i);
+                System.out.printf("%d - Sala %d - Data: %s%n", i + 1, s.getSala().getNumeroSala(), s.getDataHora());
+            }
+
+            int opcaoSessao = Integer.parseInt(scanner.nextLine());
+            if (opcaoSessao < 1 || opcaoSessao > sessoes.size()) {
+                System.out.println("Opção inválida.");
+                return;
+            }
+            Sessao sessaoEscolhida = sessoes.get(opcaoSessao - 1);
+
+            Sala sala = sessaoEscolhida.getSala();
+            exibirMapaAssentos(sala);
+
+            System.out.print("Digite a fileira do assento (ex: A): ");
+            String linha = scanner.nextLine().toUpperCase();
+            System.out.print("Digite o número do assento: ");
+            int coluna = Integer.parseInt(scanner.nextLine());
+
+            Assento assentoEscolhido = sala.buscarAssento(linha, coluna);
+
+            if (assentoEscolhido == null) {
+                System.out.println("Assento inválido.");
+                return;
+            }
+            if (assentoEscolhido.isOcupado()) {
+                System.out.println("Assento já ocupado.");
+                return;
+            }
+
+            System.out.println("Tipos de ingresso disponíveis:");
+            for (TipoIngresso tipo : TipoIngresso.values()) {
+                System.out.println("- " + tipo);
+            }
+            System.out.print("Digite o tipo de ingresso desejado: ");
+            String tipoStr = scanner.nextLine().toUpperCase();
+
+            TipoIngresso tipoIngresso;
+            try {
+                tipoIngresso = TipoIngresso.valueOf(tipoStr);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Tipo de ingresso inválido.");
+                return;
+            }
+
+            ingressoService.comprarIngresso(clienteLogado, sessaoEscolhida, assentoEscolhido, tipoIngresso, 10);
+
+            System.out.println("Ingresso comprado com sucesso!");
+        } catch (CampoInvalido e) {
+            System.out.println("Erro na compra: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Entrada numérica inválida.");
+        } catch (Exception e) {
+            System.out.println("Erro inesperado: " + e.getMessage());
         }
     }
 
-    private void reservarAssento() {
-        char[][] assentos = repositorioSalas.getAssentosSalaPadrao();
-
-        System.out.print("Digite a linha (A-J): ");
-        String linhaStr = scanner.next().toUpperCase();
-        System.out.print("Digite a coluna (1-10): ");
-        int coluna = scanner.nextInt();
-        scanner.nextLine();
-
-        int linha = linhaStr.charAt(0) - 'A';
-        int colunaIndex = coluna - 1;
-
-        if (assentos[linha][colunaIndex] == 'A') {
-            assentos[linha][colunaIndex] = 'X';
-            System.out.println("Assento " + linhaStr + coluna + " reservado com sucesso!");
-        } else {
-            System.out.println("Assento já ocupado.");
-        }
-    }
-
+    // Ultilitários, talvez seja bom fazer uma classe de utilitarios dps ou mover para o 
+    // service, não sei exatamente se isso seria uma boa prática mas deve funcionar
+    
     private void mostrarFilmesEmCartaz() {
         System.out.println(" ====== Filmes em Exibição ======");
-        var filmes = repositorioFilmes.obterTodosFilmes();
+        var filmes = filmeService.obterTodosFilmes();
+        
         if (filmes.isEmpty()) {
             System.out.println("Nenhum filme encontrado.");
         } else {
-            filmes.forEach(Filme::exibirInformacoes);
+            for (Filme filme : filmes) {
+                String nome = filme.getNome();
+                int duracao = filme.getDuracaoEmMinutos();
+                String genero = filme.getGenero().toString();
+
+                System.out.println("╔═══════════════════════════════════════╗");
+                System.out.printf("║ Nome    : %-27s ║%n", nome);
+                System.out.printf("║ Duração : %-27s ║%n", duracao + " min");
+                System.out.printf("║ Gênero  : %-27s ║%n", genero);
+                System.out.println("╚═══════════════════════════════════════╝");
+                System.out.println();
+            }
         }
     }
 
@@ -132,5 +161,34 @@ public class MenuCliente {
             System.out.println("Assento: " + ingresso.getAssento());
             System.out.println("-------------------------");
         }
+    }
+
+    private void exibirMapaAssentos(Sala sala) {
+        System.out.println("Sala " + sala.getNumeroSala() + " - Mapa de Assentos\n");
+
+        int ocupados = 0;
+        int colunas = 10;
+        String[] fileiras = {"A", "B", "C", "D", "E"};
+
+        System.out.print("    ");
+        for (int col = 1; col <= colunas; col++) {
+            System.out.printf("%-4d", col);
+        }
+        System.out.println();
+
+        for (String linha : fileiras) {
+            System.out.print(linha + ": ");
+            for (int col = 1; col <= colunas; col++) {
+                Assento assento = sala.buscarAssento(linha, col);
+                boolean ocupado = assento != null && assento.isOcupado();
+                System.out.print(ocupado ? "[X] " : "[ ] ");
+                if (ocupado) ocupados++;
+            }
+            System.out.println();
+        }
+
+        int total = sala.getAssentos().size();
+        System.out.println("\n[ ] = livre | [X] = ocupado");
+        System.out.printf("Capacidade total: %d | Ocupados: %d | Livres: %d\n\n", total, ocupados, total - ocupados);
     }
 }
