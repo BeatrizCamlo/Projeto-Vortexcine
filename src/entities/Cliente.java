@@ -15,14 +15,26 @@ public class Cliente extends Pessoa {
         return ingressos;
     }
 
-    public void listarIngressos(){
-        for(int i = 0; i <= ingressos.size(); i++){
-            System.err.println("- " + ingressos.get(i));
+    public void adicionarIngresso(Ingresso ingresso) {
+        if (ingresso != null) {
+            ingressos.add(ingresso);
         }
     }
 
-    public void exibirInformacoes(){
-        super.exibirInformacoes();
+    public void listarIngressos() {
+        if (ingressos.isEmpty()) {
+            System.out.println("Nenhum ingresso encontrado.");
+            return;
+        }
+        for (int i = 0; i < ingressos.size(); i++) {
+            System.out.println("- " + ingressos.get(i));
+        }
     }
 
+    @Override
+    public void exibirInformacoes() {
+        super.exibirInformacoes();
+        // Se quiser, pode adicionar mais informações aqui, por exemplo:
+        System.out.println("Número de ingressos comprados: " + ingressos.size());
+    }
 }

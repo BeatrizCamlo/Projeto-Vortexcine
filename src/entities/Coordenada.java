@@ -37,4 +37,10 @@ public class Coordenada {
     public int hashCode() {
         return Objects.hash(linha, coluna);
     }
+
+    @Override
+    public String toString() {
+        return linha + Integer.toString(coluna);
+    }
+
 }

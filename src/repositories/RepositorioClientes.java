@@ -1,11 +1,13 @@
 package repositories;
 
 import java.util.List;
+
+import abstracts.RepositorioInterface;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import entities.Cliente;
-import interfaces.RepositorioInterface;
 
 public class RepositorioClientes implements RepositorioInterface<Cliente> {
 

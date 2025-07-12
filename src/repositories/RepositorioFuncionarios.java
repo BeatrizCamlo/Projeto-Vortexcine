@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import abstracts.RepositorioInterface;
 import entities.Funcionario;
-import interfaces.RepositorioInterface;
 
 public class RepositorioFuncionarios implements RepositorioInterface<Funcionario> {
 

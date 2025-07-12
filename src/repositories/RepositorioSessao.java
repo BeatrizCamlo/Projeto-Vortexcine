@@ -14,21 +14,22 @@ public class RepositorioSessao {
         this.sessoesPorFilme = new HashMap<>();
     }
 
-    public void adicionarSessao(Sessao sessao) {
-        sessoesDisponiveis.add(sessao);
-        String nomeFilme = sessao.getFilme().getNome();
-        sessoesPorFilme.computeIfAbsent(nomeFilme, k -> new ArrayList<>()).add(sessao);
-    }
 
     public List<Sessao> obterTodasSessoes() {
         return new ArrayList<>(sessoesDisponiveis);
     }
 
-    public List<Sessao> buscarSessoesPorFilme(String nomeFilme) {
-        return sessoesPorFilme.getOrDefault(nomeFilme, new ArrayList<>());
-    }
-
     public boolean existeSessao(Sessao sessao) {
         return sessoesDisponiveis.contains(sessao);
     }
+    public void adicionarSessao(Sessao sessao) {
+    sessoesDisponiveis.add(sessao);
+    String nomeFilme = sessao.getFilme().getNome().toLowerCase().trim();
+    sessoesPorFilme.computeIfAbsent(nomeFilme, k -> new ArrayList<>()).add(sessao);
+    }
+
+    public List<Sessao> buscarSessoesPorFilme(String nomeFilme) {
+        return sessoesPorFilme.getOrDefault(nomeFilme.toLowerCase().trim(), new ArrayList<>());
+    }
+
 }

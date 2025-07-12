@@ -13,6 +13,7 @@ public class MenuCliente {
     private final SessaoService sessaoService;
     private final SalaService salaService;
     private final IngressoService ingressoService;
+    private final MenuFilme menuFilme;
 
     public MenuCliente(
         Scanner scanner,
@@ -21,7 +22,8 @@ public class MenuCliente {
         FilmeService filmeService,
         SessaoService sessaoService,
         SalaService salaService,
-        IngressoService ingressoService
+        IngressoService ingressoService,
+        MenuFilme menuFilme
     ) {
         this.scanner = scanner;
         this.clienteLogado = clienteLogado;
@@ -30,6 +32,7 @@ public class MenuCliente {
         this.sessaoService = sessaoService;
         this.salaService = salaService;
         this.ingressoService = ingressoService;
+        this.menuFilme = menuFilme;
     }
 
     public void exibirMenu() {
@@ -46,7 +49,7 @@ public class MenuCliente {
 
             switch (opcao) {
                 case 1: comprarIngresso(); break;
-                case 2: mostrarFilmesEmCartaz(); break;
+                case 2: menuFilme.mostrarFilmesEmCartaz(); break;
                 case 3: exibirMeusIngressos(); break;
                 case 0: clienteLogado = null; break;
                 default: System.out.println("Opção inválida."); break;
@@ -56,7 +59,7 @@ public class MenuCliente {
 
     private void comprarIngresso() {
         try {
-            mostrarFilmesEmCartaz();
+            menuFilme.mostrarFilmesEmCartaz();
 
             System.out.print("Digite o nome do filme para escolher a sessão: ");
             String nomeFilme = scanner.nextLine();
@@ -111,43 +114,29 @@ public class MenuCliente {
                 tipoIngresso = TipoIngresso.valueOf(tipoStr);
             } catch (IllegalArgumentException e) {
                 System.out.println("Tipo de ingresso inválido.");
-                return;
+                return ;
             }
 
-            ingressoService.comprarIngresso(clienteLogado, sessaoEscolhida, assentoEscolhido, tipoIngresso, 10);
+            // Compra o ingresso via serviço
+            Ingresso ingresso = ingressoService.comprarIngresso(
+                clienteLogado,
+                sessaoEscolhida,
+                assentoEscolhido,
+                tipoIngresso,
+                10 // preço fixo para o exemplo, pode parametrizar depois
+            );
+
+            // Adiciona ingresso ao cliente
+            clienteLogado.adicionarIngresso(ingresso);
 
             System.out.println("Ingresso comprado com sucesso!");
+
         } catch (CampoInvalido e) {
             System.out.println("Erro na compra: " + e.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("Entrada numérica inválida.");
         } catch (Exception e) {
             System.out.println("Erro inesperado: " + e.getMessage());
-        }
-    }
-
-    // Ultilitários, talvez seja bom fazer uma classe de utilitarios dps ou mover para o 
-    // service, não sei exatamente se isso seria uma boa prática mas deve funcionar
-    
-    private void mostrarFilmesEmCartaz() {
-        System.out.println(" ====== Filmes em Exibição ======");
-        var filmes = filmeService.obterTodosFilmes();
-        
-        if (filmes.isEmpty()) {
-            System.out.println("Nenhum filme encontrado.");
-        } else {
-            for (Filme filme : filmes) {
-                String nome = filme.getNome();
-                int duracao = filme.getDuracaoEmMinutos();
-                String genero = filme.getGenero().toString();
-
-                System.out.println("╔═══════════════════════════════════════╗");
-                System.out.printf("║ Nome    : %-27s ║%n", nome);
-                System.out.printf("║ Duração : %-27s ║%n", duracao + " min");
-                System.out.printf("║ Gênero  : %-27s ║%n", genero);
-                System.out.println("╚═══════════════════════════════════════╝");
-                System.out.println();
-            }
         }
     }
 

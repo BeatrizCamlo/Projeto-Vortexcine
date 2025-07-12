@@ -1,6 +1,6 @@
-package interfaces;
+package abstracts;
 
-public interface RepositorioInterface<T> {
+public abstract interface RepositorioInterface<T> {
 
     void cadastrar(T entidade);
 

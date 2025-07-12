@@ -28,4 +28,10 @@ public class Assento {
     public void exibirInformacoesAssento() {
         System.out.println("Assento " + coordenada + " - " + (ocupado ? "Ocupado" : "Livre") );
     }
+
+    @Override
+    public String toString() {
+        return coordenada.toString();
+    }
+
 }

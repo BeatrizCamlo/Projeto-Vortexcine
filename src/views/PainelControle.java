@@ -85,7 +85,7 @@ public class PainelControle {
         Cliente clienteLogado = clienteService.autenticar(email, senha);
         if (clienteLogado != null) {
             System.out.println("Login realizado com sucesso!");
-            MenuCliente menuCliente = new MenuCliente(scanner, clienteLogado, clienteService, filmeService, sessaoService, salaService, null);
+            MenuCliente menuCliente = new MenuCliente(scanner, clienteLogado, clienteService, filmeService, sessaoService, salaService, ingressoService, new MenuFilme(clienteLogado, scanner));
             menuCliente.exibirMenu();
         } else {
             System.out.println("Credenciais inválidas.");
