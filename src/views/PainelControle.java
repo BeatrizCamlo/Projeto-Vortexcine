@@ -77,42 +77,51 @@ public class PainelControle {
     }
 
     private void loginCliente() {
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-        System.out.print("Senha: ");
-        String senha = scanner.nextLine();
+    System.out.print("Email: ");
+    String email = scanner.nextLine();
+    System.out.print("Senha: ");
+    String senha = scanner.nextLine();
 
+    try {
         Cliente clienteLogado = clienteService.autenticar(email, senha);
-        if (clienteLogado != null) {
-            System.out.println("Login realizado com sucesso!");
-            MenuCliente menuCliente = new MenuCliente(scanner, clienteLogado, clienteService, filmeService, sessaoService, salaService, ingressoService, new MenuFilme(clienteLogado, scanner));
-            menuCliente.exibirMenu();
-        } else {
-            System.out.println("Credenciais inválidas.");
-        }
+        System.out.println("Login realizado com sucesso!");
+        MenuCliente menuCliente = new MenuCliente(
+            scanner,
+            clienteLogado,
+            clienteService,
+            filmeService,
+            sessaoService,
+            salaService,
+            ingressoService,
+            new MenuFilme(clienteLogado, scanner)
+        );
+        menuCliente.exibirMenu();
+    } catch (CampoInvalido e) {
+        System.out.println("Erro: " + e.getMessage());
     }
+}
 
     private void loginFuncionario() {
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-        System.out.print("Senha: ");
-        String senha = scanner.nextLine();
+    System.out.print("Email: ");
+    String email = scanner.nextLine();
+    System.out.print("Senha: ");
+    String senha = scanner.nextLine();
 
+    try {
         Funcionario funcionarioLogado = funcionarioService.autenticar(email, senha);
-        if (funcionarioLogado != null) {
-            System.out.println("Login realizado com sucesso!");
-            MenuFuncionario menuFuncionario = new MenuFuncionario(
-                scanner,
-                funcionarioLogado,
-                filmeService,
-                funcionarioService,
-                clienteService,
-                salaService,
-                sessaoService
-            );
-            menuFuncionario.exibirMenu();
-        } else {
-            System.out.println("Credenciais inválidas.");
-        }
+        System.out.println("Login realizado com sucesso!");
+        MenuFuncionario menuFuncionario = new MenuFuncionario(
+            scanner,
+            funcionarioLogado,
+            filmeService,
+            funcionarioService,
+            clienteService,
+            salaService,
+            sessaoService
+        );
+        menuFuncionario.exibirMenu();
+    } catch (CampoInvalido e) {
+        System.out.println("Erro: " + e.getMessage()); 
+    }
     }
 }

@@ -8,16 +8,30 @@ import repositories.RepositorioFuncionarios;
 
 public class FuncionarioService {
     private RepositorioFuncionarios repositorio;
+    private static final String dominio_aceito = "vortexcine.com";
 
     public FuncionarioService(RepositorioFuncionarios repositorio) {
         this.repositorio = repositorio;
-        inicializarGerentePadrao();
+        inicializarFuncionarios();
+    }
+
+    private void validarEmail(String email) {
+        if (email == null || !email.contains("@")) {
+            throw new CampoInvalido("Email inválido.");
+        }
+
+        String dominio = email.substring(email.indexOf("@") + 1).toLowerCase();
+
+        if (!dominio_aceito.contains(dominio)) {
+            throw new CampoInvalido("Domínio de e-mail não aceito: " + dominio);
+        }
     }
 
     public void cadastrarFuncionario(Funcionario funcionario) {
         if (funcionario == null) {
             throw new CampoInvalido("Funcionário não pode ser nulo.");
         }
+        validarEmail(funcionario.getEmail());
         if (repositorio.obterPorEmail(funcionario.getEmail()) != null) {
             throw new CampoInvalido("Email já cadastrado.");
         }
@@ -76,10 +90,20 @@ public class FuncionarioService {
         repositorio.remover(funcionario);
     }
 
-    public void inicializarGerentePadrao() {
-        Funcionario gerente = new Funcionario("adm", "adm", "adm", true);
+    public void inicializarFuncionarios() {
+        Funcionario gerente = new Funcionario("adm", "adm@vortexcine.com", "adm", true);
+        Funcionario moises = new Funcionario("moises", "moises@vortexcine.com", "moises", false);
+        Funcionario ana = new Funcionario("ana", "anabea@vortexcine.com", "ana", false);
+        Funcionario rodrigo = new Funcionario("rodrigo", "rodrigo@vortexcine.com", "rodrigo", false);
+        Funcionario maria = new Funcionario("maria", "marilu@vortexcine.com", "maria", false);
+        Funcionario joao = new Funcionario("joao", "joca@vortexcine.com", "joao", false);
         try {
             cadastrarFuncionario(gerente);
+            cadastrarFuncionario(moises);
+            cadastrarFuncionario(ana);
+            cadastrarFuncionario(rodrigo);
+            cadastrarFuncionario(maria);
+            cadastrarFuncionario(joao);
         } catch (CampoInvalido e) {
             System.out.println("Gerente padrão já existe.");
         }

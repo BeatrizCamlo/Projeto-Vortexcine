@@ -15,18 +15,15 @@ public class MenuFilme extends MenuBase {
 
     private final FilmeService filmeService;
     private final Funcionario funcionarioLogado;
-    private final Cliente clienteLogado;
     private final Scanner scanner;
 
     public MenuFilme(Funcionario funcionarioLogado, Scanner scanner) {
         this.filmeService = new FilmeService(new RepositorioFilmes());
         this.funcionarioLogado = funcionarioLogado;
-        this.clienteLogado = null;
         this.scanner = scanner;
     }
 
     public MenuFilme(Cliente clienteLogado, Scanner scanner) {
-        this.clienteLogado = clienteLogado;
         this.funcionarioLogado = null;
         this.filmeService = new FilmeService(new RepositorioFilmes());
         this.scanner = scanner;
@@ -55,7 +52,6 @@ public class MenuFilme extends MenuBase {
         }
     }
 
-    // Parte dos Filmes
 
     private void cadastrarFilme() {
         exibirCabecalho("Cadastrar Filme");

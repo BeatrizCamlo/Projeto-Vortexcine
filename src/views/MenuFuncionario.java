@@ -5,6 +5,9 @@ import entities.*;
 import exceptions.CampoInvalido;
 import services.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class MenuFuncionario extends MenuBase {
@@ -82,12 +85,7 @@ public class MenuFuncionario extends MenuBase {
     // ---------------- MÉTODOS DE GERENCIAMENTO ----------------
 
    private void gerenciarFilmes() {
-    int opcao;
-    do {
         menuFilme.exibirMenu();
-        opcao = lerOpcao(scanner);
-        menuFilme.tratarOpcao(opcao);
-    } while (opcao != 0);
     }
 
 
@@ -190,7 +188,7 @@ public class MenuFuncionario extends MenuBase {
     }
 
     private void listarFuncionarios() {
-        var funcionarios = funcionarioService.obterTodosClientes(); // talvez renomear esse método
+        var funcionarios = funcionarioService.obterTodosClientes(); 
         if (funcionarios.isEmpty()) {
             System.out.println("Nenhum funcionário cadastrado.");
             return;
@@ -290,42 +288,48 @@ public class MenuFuncionario extends MenuBase {
     }
 
     // ---------------- SESSÃO ----------------
-    private void criarSessao() {
-        exibirCabecalho("Criar Sessão");
-        try {
-            System.out.print("Nome do filme: ");
-            String nomeFilme = scanner.nextLine();
-            Filme filme = filmeService.obterPorNome(nomeFilme);
-            if (filme == null) {
-                System.out.println("Filme não encontrado.");
-                return;
-            }
-
-            System.out.print("Número da sala: ");
-            int numeroSala = Integer.parseInt(scanner.nextLine());
-            Sala sala = salaService.buscarSalaPorNumero(numeroSala);
-            if (sala == null) {
-                System.out.println("Sala não encontrada.");
-                return;
-            }
-
-            System.out.print("Data e hora da sessão: ");
-            String dataHora = scanner.nextLine();
-            if (dataHora.isBlank()) {
-                System.out.println("Data/hora inválida.");
-                return;
-            }
-
-            Sessao sessao = new Sessao(filme, sala, dataHora);
-            sessaoService.criarSessao(sessao);
-            salaService.associarSessaoASala(sala, sessao);
-            System.out.println("Sessão criada com sucesso.");
-        } catch (NumberFormatException e) {
-            System.out.println("Erro: número inválido.");
-        } catch (CampoInvalido e) {
-            System.out.println("Erro: " + e.getMessage());
+   private void criarSessao() {
+    exibirCabecalho("Criar Sessão");
+    try {
+        System.out.print("Nome do filme: ");
+        String nomeFilme = scanner.nextLine();
+        Filme filme = filmeService.obterPorNome(nomeFilme);
+        if (filme == null) {
+            System.out.println("Filme não encontrado.");
+            return;
         }
+
+        System.out.print("Número da sala: ");
+        int numeroSala = Integer.parseInt(scanner.nextLine());
+        Sala sala = salaService.buscarSalaPorNumero(numeroSala);
+        if (sala == null) {
+            System.out.println("Sala não encontrada.");
+            return;
+        }
+
+        // Aqui entra o seu trecho com DateTimeFormatter e tratamento da exceção
+        System.out.print("Data e hora da sessão (dd/MM/yyyy HH:mm): ");
+        String dataHoraStr = scanner.nextLine();
+
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            LocalDateTime dataHora = LocalDateTime.parse(dataHoraStr, formatter);
+
+            Sessao novaSessao = new Sessao(filme, sala, dataHora);
+            sessaoService.criarSessao(novaSessao); 
+            salaService.associarSessaoASala(sala, novaSessao);
+            System.out.println("Sessão criada com sucesso.");
+        } catch (DateTimeParseException e) {
+            System.out.println("Formato de data/hora inválido. Use: dd/MM/yyyy HH:mm (ex: 12/12/2012 14:20)");
+        }
+
+    } catch (NumberFormatException e) {
+        System.out.println("Erro: número inválido.");
+    } catch (CampoInvalido e) {
+        System.out.println("Erro: " + e.getMessage());
     }
+}
+
 
     
 

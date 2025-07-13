@@ -1,19 +1,23 @@
 package entities;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Sessao {
     private Filme filme;
     private Sala sala;
-    private String dataHora;
+    private LocalDateTime horarioInicio;
     private List<Cliente> publico;
     private List<Assento> assentosOcupados;
 
-    public Sessao(Filme filme, Sala sala, String dataHora) {
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+    public Sessao(Filme filme, Sala sala, LocalDateTime dataHora) {
         this.filme = filme;
         this.sala = sala;
-        this.dataHora = dataHora;
+        this.horarioInicio = (dataHora);
         this.publico = new ArrayList<>();
         this.assentosOcupados = new ArrayList<>();
     }
@@ -30,13 +34,17 @@ public class Sessao {
         this.sala = sala;
     }
 
-    public String getDataHora() {
-        return dataHora;
+    public LocalDateTime getHorarioInicio() {
+        return horarioInicio;
+    }
+
+    public LocalDateTime getHorarioFim() {
+        return horarioInicio.plusMinutes(filme.getDuracaoEmMinutos());
     }
 
     public boolean assentoDisponivel(Coordenada coordenada) {
-        for (int i = 0; i <= assentosOcupados.size(); i++) {
-            if (assentosOcupados.get(i).getCoordenada().equals(coordenada)) {
+        for (Assento assento : assentosOcupados) {
+            if (assento.getCoordenada().equals(coordenada)) {
                 return false;
             }
         }
@@ -55,23 +63,29 @@ public class Sessao {
         return true;
     }
 
-    
     public void exibirInformacoesSessao() {
         System.out.println("=== Sessão ===");
         System.out.println("Filme: " + filme.getNome());
-        System.out.println("Data/Hora: " + dataHora);
+        System.out.println("Data/Hora de início: " + horarioInicio.format(FORMATTER));
+        System.out.println("Horário de término: " + getHorarioFim().format(FORMATTER));
         System.out.println("Sala: " + sala.getNumeroSala());
         System.out.println("Assentos ocupados: " + assentosOcupados.size());
         System.out.println("Total de espectadores: " + publico.size());
     }
 
     public void setFilme(Filme novoFilme) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setFilme'");
+        this.filme = novoFilme;
+    }
+
+    public void setHorarioInicio(String novaDataHora) {
+        this.horarioInicio = LocalDateTime.parse(novaDataHora, FORMATTER);
+    }
+    
+    public String getDataHora() {
+        return horarioInicio.format(FORMATTER);
     }
 
     public void setData(String novaData) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setData'");
+        this.horarioInicio = LocalDateTime.parse(novaData + " " + horarioInicio.toLocalTime().format(FORMATTER), FORMATTER);
     }
 }

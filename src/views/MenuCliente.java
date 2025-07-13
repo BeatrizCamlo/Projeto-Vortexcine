@@ -8,10 +8,7 @@ import java.util.Scanner;
 public class MenuCliente {
     private final Scanner scanner;
     private Cliente clienteLogado;
-    private final ClienteService clienteService;
-    private final FilmeService filmeService;
     private final SessaoService sessaoService;
-    private final SalaService salaService;
     private final IngressoService ingressoService;
     private final MenuFilme menuFilme;
 
@@ -27,10 +24,7 @@ public class MenuCliente {
     ) {
         this.scanner = scanner;
         this.clienteLogado = clienteLogado;
-        this.clienteService = clienteService;
-        this.filmeService = filmeService;
         this.sessaoService = sessaoService;
-        this.salaService = salaService;
         this.ingressoService = ingressoService;
         this.menuFilme = menuFilme;
     }
@@ -116,17 +110,16 @@ public class MenuCliente {
                 System.out.println("Tipo de ingresso inválido.");
                 return ;
             }
-
-            // Compra o ingresso via serviço
+            
             Ingresso ingresso = ingressoService.comprarIngresso(
                 clienteLogado,
                 sessaoEscolhida,
                 assentoEscolhido,
                 tipoIngresso,
-                10 // preço fixo para o exemplo, pode parametrizar depois
+                10 
             );
 
-            // Adiciona ingresso ao cliente
+            
             clienteLogado.adicionarIngresso(ingresso);
 
             System.out.println("Ingresso comprado com sucesso!");

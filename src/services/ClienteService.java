@@ -1,13 +1,31 @@
 package services;
 
 import java.util.List;
-
+import java.util.Set;
 import entities.Cliente;
 import exceptions.CampoInvalido;
 import repositories.RepositorioClientes;
 
 public class ClienteService {
     private RepositorioClientes repositorio;
+    private static final Set<String> DOMINIOS_ACEITOS = Set.of(
+        "gmail.com",
+        "outlook.com",
+        "hotmail.com",
+        "yahoo.com"
+    );
+
+     private void validarEmail(String email) {
+        if (email == null || !email.contains("@")) {
+            throw new CampoInvalido("Email inválido.");
+        }
+
+        String dominio = email.substring(email.indexOf("@") + 1).toLowerCase();
+
+        if (!DOMINIOS_ACEITOS.contains(dominio)) {
+            throw new CampoInvalido("Domínio de e-mail não aceito: " + dominio);
+        }
+    }
 
     public ClienteService(RepositorioClientes repositorio) {
         this.repositorio = repositorio;
@@ -17,10 +35,26 @@ public class ClienteService {
         if (cliente == null) {
             throw new CampoInvalido("Cliente não pode ser nulo.");
         }
+        validarEmail(cliente.getEmail());
         if (repositorio.obterPorEmail(cliente.getEmail()) != null) {
             throw new CampoInvalido("Já existe um cliente cadastrado com este email.");
         }
         repositorio.cadastrar(cliente);
+    }
+
+    public void inicializarClientesPadrao() {
+        Cliente cliente1 = new Cliente("João", "jaofilho@gmail.com", "joao");
+        Cliente cliente2 = new Cliente("Gustavo", "gustag@hotmail.com", "gustavo");
+        Cliente cliente3 = new Cliente("Bianca","biacac@yahoo.com", "bianca");
+        Cliente cliente4 = new Cliente("Vilma", "vilminha@outlook.com", "vilma");
+        try {
+            cadastrarCliente(cliente1);
+            cadastrarCliente(cliente2);
+            cadastrarCliente(cliente3);
+            cadastrarCliente(cliente4);
+        } catch (CampoInvalido e) {
+            System.out.println("Erro ao inicializar clientes: " + e.getMessage());
+        }
     }
 
     public void removerCliente(Cliente cliente) {

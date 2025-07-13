@@ -56,6 +56,10 @@ public class Sala {
         }
     }
 
+    public void adicionarSessao(Sessao sessao) {
+    sessoes.add(sessao);
+    }
+
     public void exibirInformacoes() {
         System.out.println("=== Sala " + numeroSala + " ===");
         System.out.println("Assentos totais: " + assentos.size());
