@@ -116,7 +116,7 @@ public class FuncionarioService {
 
         Funcionario funcionario = repositorio.obterPorEmail(email);
         if (funcionario == null) {
-            throw new CampoInvalido("Funcionário não encontrado.");
+            throw new CampoInvalido("Cliente não encontrado.");
         }
 
         return funcionario;

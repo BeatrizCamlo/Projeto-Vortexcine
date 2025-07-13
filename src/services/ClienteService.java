@@ -30,6 +30,7 @@ public class ClienteService {
     public ClienteService(RepositorioClientes repositorio) {
         this.repositorio = repositorio;
         inicializarClientesPadrao();
+
     }
 
     public void cadastrarCliente(Cliente cliente) {
