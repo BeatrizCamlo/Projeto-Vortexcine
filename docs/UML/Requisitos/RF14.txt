@@ -1,0 +1,1 @@
+RF14: O sistema deve permitir que gerentes modifiquem dados de funcionários.

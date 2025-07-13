@@ -1,0 +1,170 @@
+classDiagram
+
+class Pessoa {
+  -int id
+  -String nome
+  -String email
+  -String senha
+
+  +getNome()
+  +getEmail()
+  +getSenha()
+}
+
+class Cliente {
+  -Ingresso ingresso
+}
+
+class Funcionario {
+  -boolean ehGerente
+}
+
+class Ingresso {
+  -Sessao sessao
+  -Assento assento
+  -double preco
+}
+
+class RepositorioClientes {
+  -List<Cliente> clientesCadastrados
+  -HashMap<String, Cliente> clientePorEmail
+
+  +adicionarCliente()
+  +removerCliente()
+  +modificarNomeCliente()
+  +modificarEmailCliente()
+  +modificarSenhaCliente()
+  +obterClientePorId()
+  +obterTodosClientes()
+}
+
+class RepositorioFuncionario {
+  -List<Funcionario> funcionariosAtivos
+  -HashMap<String, Funcionario> funcionariosPorEmail
+
+  +adicionarFuncionario()
+  +removerFuncionario()
+  +modificarNomeFuncionario()
+  +modificarEmailFuncionario()
+  +modificarSenhaFuncionario()
+  +buscarFuncionarioId()
+  +obterTodosFuncionarios()
+}
+
+class Filme {
+  -String nome
+  -int duracaoEmMinutos
+  -Enum genero
+}
+
+class RepositorioFilmes {
+  -List<Filme> filmesCadastrados
+
+  +adicionarFilmes()
+  +removerFilmes()
+  +modificarNomeFilme()
+  +modificarDuracaoFilme()
+  +modificarGeneroFilme()
+  +obterFilmePorId()
+  +obterTodosFilmes()
+
+}
+
+class Assento {
+  -Coordenada coordenada
+}
+
+class RepositorioAssentos {
+  -HashMap<Cliente, Assento> assentosOcupados
+
+  +ocuparAssento()
+  +isAssentoOcupado()
+  +desocuparAssento()
+  +limparTodosAssentos()
+  +getAssentosOcupados()
+
+}
+
+class Coordenada {
+  -String coordenada
+}
+
+class Sessao {
+  -Filme filmeReproduzido
+  -Sala sala
+  -List<Cliente> publico
+  -String data
+}
+
+class RepositorioSessao{
+  -private List<Sessao> sessoesDisponiveis;
+  -private HashMap<String, Sessao> sessoesPorFilme;
+
+  +adicionarSessao()
+  +modificarSalaSessao()
+  +modificarFilmeSessao()
+  +modificarDataSessao()
+}
+
+class Sala {
+  -String numeracao
+  -List<Assento> assentos
+  -List<Sessao> sessoes
+}
+
+class RepositorioSalas {
+  -List<Sala> salasTotais
+  -HashMap<Sessao, Sala> salasOcupadas
+
+  +ocuparSalaComSessao()
+  +buscarSalaPorSessao()
+}
+
+class Painel de Controle(){
+  -RepositorioSessao repositorioSessoes
+  -RepositorioClientes repositorioClientes
+  -RepositorioFilmes repositorioFilmes
+  -RepositorioFuncionario repositorioFuncionario
+  -RepositorioSalas RepositorioSalas
+
+  +mostrarRecepcao() 
+  +loginTipoUsuario() // Mostrar interface de escolha se o fluxo de sistema será para Cliente ou Funcionario.
+  +processarEscolhaUsuario() // Processar entrada anterior.
+  +loginFuncionario() // Funcionario insere seu email e senha.
+  +menuFuncionario() // Funcionario escolhe opcoes para CRUD de filmes. Em caso de Gerente, aparece a opção de CRUD de clientes e funcionarios. Ambos tem a opção de deslogar
+  +cadastrarFilme() // MENU FUNCIONARIO
+  +atualizarFilme() // MENU FUNCIONARIO
+  +visualizarFilmes() // MENU FUNCIONARIO
+  +deletarFilmes() // MENU FUNCIONARIO
+  +loginCliente() // Cliente insere seu email e senha.
+  +menuCliente() // Cliente escolhe opcoes comprar ingresso, visualizar ingressos comprados e deslogar.
+  +mostrarFilmesEmCartaz // Mostra as sessoes disponíveis assim que o Cliente consegue logar.
+  +comprarIngresso() // MENU CLIENTE
+  +mostarAssentos() // Matriz para representar a sala de cinema e seus assentos.  
+  +atualizarAssentos() // Adicionar as coordenadas do assento escolhidas pelo Cliente 
+}
+
+
+Pessoa <|-- Cliente
+Pessoa <|-- Funcionario
+
+Cliente --> Ingresso
+Ingresso --> Sessao
+Ingresso --> Assento
+
+RepositorioClientes --> Cliente
+RepositorioFuncionario --> Funcionario
+RepositorioFilmes --> Filme
+RepositorioAssentos --> Assento
+RepositorioAssentos --> Cliente
+RepositorioSalas --> Sala
+RepositorioSalas --> Sessao
+
+Assento --> Coordenada
+
+Sessao --> Filme
+Sessao --> Sala
+Sessao --> Cliente
+
+Sala --> Assento
+Sala --> Sessao

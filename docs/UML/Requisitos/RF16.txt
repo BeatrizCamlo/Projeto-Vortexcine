@@ -1,0 +1,1 @@
+RF16: O sistema deve impedir conflitos de agendamento (ex: duas sessões na mesma sala no mesmo horário).
