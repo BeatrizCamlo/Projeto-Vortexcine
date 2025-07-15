@@ -3,6 +3,8 @@ package views;
 import services.*;
 import entities.*;
 import exceptions.CampoInvalido;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class MenuCliente {
@@ -27,6 +29,7 @@ public class MenuCliente {
         this.sessaoService = sessaoService;
         this.ingressoService = ingressoService;
         this.menuFilme = menuFilme;
+        
     }
 
     public void exibirMenu() {
@@ -45,7 +48,11 @@ public class MenuCliente {
                 case 1: comprarIngresso(); break;
                 case 2: menuFilme.mostrarFilmesEmCartaz(); break;
                 case 3: exibirMeusIngressos(); break;
-                case 0: clienteLogado = null; break;
+                case 0: if (clienteLogado == null) {
+                    System.out.println("Erro: Nenhum cliente está logado.");
+                    return;
+                    }; 
+                break;
                 default: System.out.println("Opção inválida."); break;
             }
         } while (opcao != 0);
@@ -134,6 +141,14 @@ public class MenuCliente {
     }
 
     private void exibirMeusIngressos() {
+
+        List<Ingresso> ingressos = clienteLogado.getIngressos();
+
+        if (ingressos == null || ingressos.isEmpty()) {
+            System.out.println("Você ainda não comprou nenhum ingresso.");
+            return;
+        }
+
         System.out.println("==== Ingressos do Cliente ====");
         for (Ingresso ingresso : clienteLogado.getIngressos()) {
             System.out.println("-------------------------");

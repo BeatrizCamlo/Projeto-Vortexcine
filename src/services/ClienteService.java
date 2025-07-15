@@ -109,11 +109,13 @@ public class ClienteService {
         if (email == null || senha == null || email.isEmpty() || senha.isEmpty()) {
             throw new CampoInvalido("Email e senha não podem ser nulos ou vazios.");
         }
+
         Cliente cliente = repositorio.obterPorEmail(email);
-        if (cliente != null && cliente.getSenha().equals(senha)) {
-            return cliente;
+        if (cliente == null || !cliente.getSenha().equals(senha)) {
+            throw new CampoInvalido("Email ou senha incorretos.");
         }
-        return null;
+
+        return cliente;
     }
 
     public Cliente buscarPorEmail(String email) {

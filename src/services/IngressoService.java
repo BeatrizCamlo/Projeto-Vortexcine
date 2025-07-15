@@ -38,6 +38,9 @@ public class IngressoService {
 
 
     public List<Ingresso> listarIngressosPorCliente(Cliente cliente) {
+        if (cliente == null) {
+            throw new IllegalArgumentException("Cliente não pode ser nulo.");
+        }
         return repositorio.buscarPorCliente(cliente);
     }
 }

@@ -323,8 +323,8 @@ public class MenuFuncionario extends MenuBase {
             LocalDateTime dataHora = LocalDateTime.parse(dataHoraStr, formatter);
 
             Sessao novaSessao = new Sessao(filme, sala, dataHora);
-            sessaoService.criarSessao(novaSessao); 
             salaService.associarSessaoASala(sala, novaSessao);
+            sessaoService.criarSessao(novaSessao);
             System.out.println("Sessão criada com sucesso.");
         } catch (DateTimeParseException e) {
             System.out.println("Formato de data/hora inválido. Use: dd/MM/yyyy HH:mm (ex: 12/12/2012 14:20)");
@@ -336,10 +336,6 @@ public class MenuFuncionario extends MenuBase {
         System.out.println("Erro: " + e.getMessage());
     }
 }
-
-
-    
-
     private void visualizarSessoes() {
         exibirCabecalho("Sessões Cadastradas");
         try {

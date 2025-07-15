@@ -31,13 +31,18 @@ public class MenuFilme extends MenuBase {
 
     @Override
     public void exibirMenu() {
-        exibirCabecalho("Menu Filme");
-        System.out.println("1. Cadastrar Filme");
-        System.out.println("2. Editar Filme");
-        System.out.println("3. Remover Filme");
-        System.out.println("4. Listar Filmes");
-        System.out.println("0. Voltar");
-        System.out.print("Escolha uma opção: ");
+        int opcao;
+        do {
+            exibirCabecalho("Menu Filme");
+            System.out.println("1. Cadastrar Filme");
+            System.out.println("2. Editar Filme");
+            System.out.println("3. Remover Filme");
+            System.out.println("4. Listar Filmes");
+            System.out.println("0. Voltar");
+            System.out.print("Escolha uma opção: ");
+            opcao = lerOpcao(scanner);
+            tratarOpcao(opcao);
+        } while (opcao != 0);
     }
 
     @Override

@@ -84,18 +84,22 @@ public class PainelControle {
 
     try {
         Cliente clienteLogado = clienteService.autenticar(email, senha);
-        System.out.println("Login realizado com sucesso!");
-        MenuCliente menuCliente = new MenuCliente(
-            scanner,
-            clienteLogado,
-            clienteService,
-            filmeService,
-            sessaoService,
-            salaService,
-            ingressoService,
-            new MenuFilme(clienteLogado, scanner)
-        );
-        menuCliente.exibirMenu();
+        if (clienteLogado != null) {
+            System.out.println("Login realizado com sucesso!");
+            MenuCliente menuCliente = new MenuCliente(
+                scanner,
+                clienteLogado,
+                clienteService,
+                filmeService,
+                sessaoService,
+                salaService,
+                ingressoService,
+                new MenuFilme(clienteLogado, scanner)
+            );
+            menuCliente.exibirMenu();
+        } else {
+            System.out.println("Credenciais inválidas. Tente novamente.");
+        }
     } catch (CampoInvalido e) {
         System.out.println("Erro: " + e.getMessage());
     }
