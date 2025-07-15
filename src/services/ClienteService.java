@@ -29,7 +29,6 @@ public class ClienteService {
 
     public ClienteService(RepositorioClientes repositorio) {
         this.repositorio = repositorio;
-        inicializarClientesPadrao();
 
     }
 
@@ -42,21 +41,6 @@ public class ClienteService {
             throw new CampoInvalido("Já existe um cliente cadastrado com este email.");
         }
         repositorio.cadastrar(cliente);
-    }
-
-    public void inicializarClientesPadrao() {
-        Cliente cliente1 = new Cliente("João", "jaofilho@gmail.com", "joao");
-        Cliente cliente2 = new Cliente("Gustavo", "gustag@hotmail.com", "gustavo");
-        Cliente cliente3 = new Cliente("Bianca","biacac@yahoo.com", "bianca");
-        Cliente cliente4 = new Cliente("Vilma", "vilminha@outlook.com", "vilma");
-        try {
-            cadastrarCliente(cliente1);
-            cadastrarCliente(cliente2);
-            cadastrarCliente(cliente3);
-            cadastrarCliente(cliente4);
-        } catch (CampoInvalido e) {
-            System.out.println("Erro ao inicializar clientes: " + e.getMessage());
-        }
     }
 
     public void removerCliente(Cliente cliente) {

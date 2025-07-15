@@ -1,6 +1,6 @@
 package entities;
 
 public enum TipoIngresso {
-    INTEIRO,
+    INTEIRA,
     MEIA_ENTRADA
 }

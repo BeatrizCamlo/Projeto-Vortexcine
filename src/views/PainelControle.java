@@ -2,6 +2,7 @@ package views;
 
 import java.util.Scanner;
 
+import data.DataSeeder;
 import entities.Cliente;
 import entities.Funcionario;
 import exceptions.CampoInvalido;
@@ -16,6 +17,7 @@ public class PainelControle {
     private final SessaoService sessaoService = new SessaoService(new RepositorioSessao());
     private final SalaService salaService = new SalaService(new RepositorioSalas());
     private final IngressoService ingressoService = new IngressoService(new RepositorioIngressos());
+    private final DataSeeder seeder = new DataSeeder(clienteService, filmeService, funcionarioService, salaService, sessaoService);
 
     public void mostrarRecepcao() {
         System.out.println("██╗   ██╗ ██████╗ ██████╗ ████████╗███████╗██╗   ██╗██████╗██╗███╗   ██╗███████╗");
@@ -31,6 +33,7 @@ public class PainelControle {
 
     public void iniciarSistema() {
         mostrarRecepcao();
+        seeder.carregarDados();
         loginTipoUsuario();
     }
 

@@ -13,7 +13,6 @@ public class FilmeService {
 
     public FilmeService(RepositorioFilmes repositorio) {
         this.repositorio = repositorio;
-        inicializarFilmes();
     }
 
     public void adicionarFilme(Funcionario funcionario, Filme filme) {
@@ -92,15 +91,19 @@ public class FilmeService {
             throw new CampoInvalido("Nome inválido.");
         }
         return repositorio.obterPorNome(nome);
+    }   
+
+    public void adicionarFilmeaoBanco(Filme filme) {
+        if (filme == null) {
+            throw new CampoInvalido("Filme não pode ser nulo.");
+        }
+        if (repositorio.contem(filme)) {
+            throw new CampoInvalido("Filme já cadastrado.");
+        }
+        if (repositorio.obterPorNome(filme.getNome()) != null) {
+            throw new CampoInvalido("Já existe um filme com este nome.");
+        }
+        repositorio.adicionar(filme);
     }
 
-
-    // talvez seja melhor fazer uma classe de inicialização dos dados
-    public void inicializarFilmes() {
-        repositorio.adicionar(new Filme("Matrix", 136, GeneroFilme.ACAO));
-        repositorio.adicionar(new Filme("O Poderoso Chefão", 175, GeneroFilme.DRAMA));
-        repositorio.adicionar(new Filme("Toy Story", 81, GeneroFilme.ANIMACAO));
-        repositorio.adicionar(new Filme("Titanic", 195, GeneroFilme.ROMANCE));
-        repositorio.adicionar(new Filme("Vingadores: Ultimato", 181, GeneroFilme.ACAO));
-    }
 }

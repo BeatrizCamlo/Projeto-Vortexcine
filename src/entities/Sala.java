@@ -66,4 +66,15 @@ public class Sala {
         System.out.println("Sessões nesta sala: " + sessoes.size());
     }
 
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Sala other = (Sala) obj;
+        return this.numeroSala == other.numeroSala;
+    }
+
+    public int hashCode() {
+        return Integer.hashCode(numeroSala);
+    }
+
 }

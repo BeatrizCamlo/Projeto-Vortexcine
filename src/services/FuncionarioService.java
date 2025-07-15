@@ -12,7 +12,6 @@ public class FuncionarioService {
 
     public FuncionarioService(RepositorioFuncionarios repositorio) {
         this.repositorio = repositorio;
-        inicializarFuncionarios();
     }
 
     private void validarEmail(String email) {
@@ -88,25 +87,6 @@ public class FuncionarioService {
             throw new CampoInvalido("Funcionário não encontrado.");
         }
         repositorio.remover(funcionario);
-    }
-
-    public void inicializarFuncionarios() {
-        Funcionario gerente = new Funcionario("adm", "adm@vortexcine.com", "adm", true);
-        Funcionario moises = new Funcionario("moises", "moises@vortexcine.com", "moises", false);
-        Funcionario ana = new Funcionario("ana", "anabea@vortexcine.com", "ana", false);
-        Funcionario rodrigo = new Funcionario("rodrigo", "rodrigo@vortexcine.com", "rodrigo", false);
-        Funcionario maria = new Funcionario("maria", "marilu@vortexcine.com", "maria", false);
-        Funcionario joao = new Funcionario("joao", "joca@vortexcine.com", "joao", false);
-        try {
-            cadastrarFuncionario(gerente);
-            cadastrarFuncionario(moises);
-            cadastrarFuncionario(ana);
-            cadastrarFuncionario(rodrigo);
-            cadastrarFuncionario(maria);
-            cadastrarFuncionario(joao);
-        } catch (CampoInvalido e) {
-            System.out.println("Gerente padrão já existe.");
-        }
     }
 
     public Funcionario buscarPorEmail(String email) {
