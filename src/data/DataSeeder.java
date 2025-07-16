@@ -46,12 +46,16 @@ public class DataSeeder {
     }
 
     private void inicializarFilmes() {
-
+        try
+        {
         filmeService.adicionarFilmeaoBanco(new Filme("Matrix", 136, GeneroFilme.ACAO));
         filmeService.adicionarFilmeaoBanco(new Filme("O Poderoso Chefão", 175, GeneroFilme.DRAMA));
         filmeService.adicionarFilmeaoBanco(new Filme("Toy Story", 81, GeneroFilme.ANIMACAO));
         filmeService.adicionarFilmeaoBanco(new Filme("Titanic", 195, GeneroFilme.ROMANCE));
         filmeService.adicionarFilmeaoBanco(new Filme("Vingadores: Ultimato", 181, GeneroFilme.ACAO));
+        } catch (Exception e) {
+            System.out.println("Erro ao adicionar filmes: " + e.getMessage());
+        }
     }
 
     private void inicializarFuncionarios() {

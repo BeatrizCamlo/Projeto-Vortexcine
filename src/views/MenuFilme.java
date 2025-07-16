@@ -13,20 +13,21 @@ import services.FilmeService;
 
 public class MenuFilme extends MenuBase {
 
-    private final FilmeService filmeService;
+    private FilmeService filmeService;
     private final Funcionario funcionarioLogado;
     private final Scanner scanner;
 
-    public MenuFilme(Funcionario funcionarioLogado, Scanner scanner) {
-        this.filmeService = new FilmeService(new RepositorioFilmes());
-        this.funcionarioLogado = funcionarioLogado;
+    public MenuFilme(Funcionario funcionarioLogado, Scanner scanner, FilmeService filmeService) {
         this.scanner = scanner;
+        this.funcionarioLogado = funcionarioLogado;
+        this.filmeService = filmeService;
     }
 
-    public MenuFilme(Cliente clienteLogado, Scanner scanner) {
+    public MenuFilme(Cliente clienteLogado, Scanner scanner, FilmeService filmeService) {
         this.funcionarioLogado = null;
         this.filmeService = new FilmeService(new RepositorioFilmes());
         this.scanner = scanner;
+        this.filmeService = filmeService;
     }
 
     @Override

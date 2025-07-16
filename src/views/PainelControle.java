@@ -97,7 +97,7 @@ public class PainelControle {
                 sessaoService,
                 salaService,
                 ingressoService,
-                new MenuFilme(clienteLogado, scanner)
+                new MenuFilme(clienteLogado, scanner, filmeService)
             );
             menuCliente.exibirMenu();
         } else {

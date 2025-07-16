@@ -36,7 +36,7 @@ public class MenuFuncionario extends MenuBase {
         this.clienteService = clienteService;
         this.salaService = salaService;
         this.sessaoService = sessaoService;
-        menuFilme = new MenuFilme(funcionarioLogado, scanner);
+        menuFilme = new MenuFilme(funcionarioLogado, scanner, filmeService);
     }
 
    @Override
