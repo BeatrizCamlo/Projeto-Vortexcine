@@ -87,12 +87,10 @@ public class MenuCliente {
             Sala sala = sessaoEscolhida.getSala();
             exibirMapaAssentos(sala);
 
-            System.out.print("Digite a fileira do assento (ex: A): ");
-            String linha = scanner.nextLine().toUpperCase();
-            System.out.print("Digite o número do assento: ");
-            int coluna = Integer.parseInt(scanner.nextLine());
+            System.out.print("Digite a coordenada do assento A-E e 1-1O  (ex: A3, C6, B3): ");
+            String cadeira = scanner.nextLine().toUpperCase();
 
-            Assento assentoEscolhido = sala.buscarAssento(linha, coluna);
+            Assento assentoEscolhido = sala.buscarAssento(cadeira);
 
             if (assentoEscolhido == null) {
                 System.out.println("Assento inválido.");
@@ -105,24 +103,29 @@ public class MenuCliente {
 
             System.out.println("Tipos de ingresso disponíveis:");
             for (TipoIngresso tipo : TipoIngresso.values()) {
-                System.out.println("- " + tipo);
+                System.out.printf("%d - %s%n", tipo.ordinal() + 1, tipo);
             }
             System.out.print("Digite o tipo de ingresso desejado: ");
-            String tipoStr = scanner.nextLine().toUpperCase();
 
-            TipoIngresso tipoIngresso;
+            String tipoStr = scanner.nextLine();
+            int tipo;
             try {
-                tipoIngresso = TipoIngresso.valueOf(tipoStr);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Tipo de ingresso inválido.");
-                return ;
+                tipo = Integer.parseInt(tipoStr);
+                if (tipo < 1 || tipo > TipoIngresso.values().length) {
+                    System.out.println("Tipo de ingresso inválido.");
+                    return;
+                }
+                
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida.");
+                return;
             }
-            
+        
             Ingresso ingresso = ingressoService.comprarIngresso(
                 clienteLogado,
                 sessaoEscolhida,
                 assentoEscolhido,
-                tipoIngresso,
+                TipoIngresso.values()[tipo - 1],
                 10 
             );
 
@@ -176,7 +179,7 @@ public class MenuCliente {
         for (String linha : fileiras) {
             System.out.print(linha + ": ");
             for (int col = 1; col <= colunas; col++) {
-                Assento assento = sala.buscarAssento(linha, col);
+                Assento assento = sala.buscarAssento(linha + col);
                 boolean ocupado = assento != null && assento.isOcupado();
                 System.out.print(ocupado ? "[X] " : "[ ] ");
                 if (ocupado) ocupados++;

@@ -33,7 +33,7 @@ public class IngressoService {
     Ingresso ingresso = new Ingresso(sessao, assento, cliente, tipo, preco);
     repositorio.adicionar(ingresso);
 
-    return ingresso;  // Retorna o ingresso criado para uso no MenuCliente
+    return ingresso;
 }
 
 

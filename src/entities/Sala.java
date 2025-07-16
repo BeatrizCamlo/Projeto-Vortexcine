@@ -16,12 +16,13 @@ public class Sala {
     }
 
     private void gerarAssentos() {
-        String[] fileiras = {"A", "B", "C", "D", "E"}; 
-        int colunas = 10;
+    String[] fileiras = {"A", "B", "C", "D", "E"};
+    int colunas = 10;
 
         for (String linha : fileiras) {
             for (int coluna = 1; coluna <= colunas; coluna++) {
-                Coordenada coordenada = new Coordenada(linha, coluna);
+                String cadeira = linha + coluna;  
+                Coordenada coordenada = new Coordenada(cadeira);
                 Assento assento = new Assento(coordenada);
                 assentos.add(assento);
             }
@@ -40,15 +41,15 @@ public class Sala {
         return sessoes;
     }
 
-    public Assento buscarAssento(String linha, int coluna) {
+    public Assento buscarAssento(String cadeira) {
         for (Assento assento : assentos) {
-            if (assento.getCoordenada().getLinha().equalsIgnoreCase(linha)
-                    && assento.getCoordenada().getColuna() == coluna) {
+            if (assento.getCoordenada().getCadeira().equalsIgnoreCase(cadeira)) {
                 return assento;
             }
         }
         return null;
     }
+
 
     public void exibirAssentos() {
         for (int i = 0; i < assentos.size(); i++) {
