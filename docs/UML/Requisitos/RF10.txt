@@ -1,1 +1,0 @@
-RF10: O sistema deve permitir que funcionários criem novas sessões, vinculando um filme, uma sala e um horário.

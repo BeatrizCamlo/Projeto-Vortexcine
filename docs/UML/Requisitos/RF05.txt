@@ -1,1 +1,0 @@
-RF05: O sistema deve permitir que clientes comprem ingressos para uma sessão, escolhendo um assento.

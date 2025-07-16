@@ -1,1 +1,0 @@
-RF17: O sistema deve garantir que um assento só possa ser reservado por um cliente por sessão.

@@ -1,1 +1,0 @@
-RF08: O sistema deve permitir que clientes cancelem ingressos (opcional).

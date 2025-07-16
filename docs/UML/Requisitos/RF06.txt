@@ -1,1 +1,0 @@
-RF06: O sistema deve associar o ingresso ao cliente e marcar o assento como ocupado.

@@ -1,1 +1,0 @@
-RF09: O sistema deve permitir que funcionários adicionem novos filmes, com nome, duração e gênero.

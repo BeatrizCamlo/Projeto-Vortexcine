@@ -1,1 +1,0 @@
-RF01: O sistema deve permitir que clientes se cadastrem com nome, e-mail e senha.

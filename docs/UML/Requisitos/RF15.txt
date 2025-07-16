@@ -1,1 +1,0 @@
-RF15: O sistema deve armazenar e gerenciar listas de clientes, funcionários, filmes, sessões, salas e assentos.
