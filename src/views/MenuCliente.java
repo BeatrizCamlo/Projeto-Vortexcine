@@ -3,19 +3,17 @@ package views;
 import services.*;
 import entities.*;
 import exceptions.CampoInvalido;
+import abstracts.MenuBase;
 
 import java.util.List;
-import java.util.Scanner;
 
-public class MenuCliente {
-    private final Scanner scanner;
+public class MenuCliente extends MenuBase {
     private Cliente clienteLogado;
     private final SessaoService sessaoService;
     private final IngressoService ingressoService;
     private final MenuFilme menuFilme;
 
     public MenuCliente(
-        Scanner scanner,
         Cliente clienteLogado,
         ClienteService clienteService,
         FilmeService filmeService,
@@ -24,133 +22,138 @@ public class MenuCliente {
         IngressoService ingressoService,
         MenuFilme menuFilme
     ) {
-        this.scanner = scanner;
         this.clienteLogado = clienteLogado;
         this.sessaoService = sessaoService;
         this.ingressoService = ingressoService;
         this.menuFilme = menuFilme;
-        
     }
 
+    @Override
     public void exibirMenu() {
-        int opcao;
-        do {
-            System.out.println("\n===== Menu Cliente =====");
-            System.out.println("1 - Comprar ingresso");
-            System.out.println("2 - Visualizar filmes em cartaz");
-            System.out.println("3 - Meus ingressos");
-            System.out.println("0 - Logout");
-            System.out.print("Escolha uma opção: ");
-
-            opcao = Integer.parseInt(scanner.nextLine());
-
-            switch (opcao) {
-                case 1: comprarIngresso(); break;
-                case 2: menuFilme.mostrarFilmesEmCartaz(); break;
-                case 3: exibirMeusIngressos(); break;
-                case 0: if (clienteLogado == null) {
-                    System.out.println("Erro: Nenhum cliente está logado.");
-                    return;
-                    }; 
-                break;
-                default: System.out.println("Opção inválida."); break;
-            }
-        } while (opcao != 0);
+        exibirCabecalho("Menu Cliente");
+        System.out.println("1 - Comprar ingresso");
+        System.out.println("2 - Visualizar filmes em cartaz");
+        System.out.println("3 - Meus ingressos");
+        System.out.println("0 - Logout");
+        System.out.print("Escolha uma opção: ");
     }
 
-private void comprarIngresso() {
-    try {
-        menuFilme.mostrarFilmesEmCartaz();
-
-        System.out.print("Digite o nome do filme para escolher a sessão: ");
-        String nomeFilme = scanner.nextLine();
-
-        var sessoes = sessaoService.buscarSessoesPorFilme(nomeFilme);
-        if (sessoes.isEmpty()) {
-            System.out.println("Nenhuma sessão encontrada para esse filme.");
-            return;
-        }
-
-        System.out.println("Selecione a sessão:");
-        for (int i = 0; i < sessoes.size(); i++) {
-            Sessao s = sessoes.get(i);
-            System.out.printf("%d - Sala %d - Data: %s%n", i + 1, s.getSala().getNumeroSala(), s.getDataHora());
-        }
-
-        int opcaoSessao = Integer.parseInt(scanner.nextLine());
-        if (opcaoSessao < 1 || opcaoSessao > sessoes.size()) {
-            System.out.println("Opção inválida.");
-            return;
-        }
-
-        Sessao sessaoEscolhida = sessoes.get(opcaoSessao - 1);
-        Sala sala = sessaoEscolhida.getSala();
-
-        exibirMapaAssentos(sala);
-
-        System.out.print("Quantos ingressos deseja comprar? ");
-        int quantidade = Integer.parseInt(scanner.nextLine());
-
-        for (int i = 0; i < quantidade; i++) {
-            Assento assentoEscolhido = null;
-            while (true) {
-                System.out.print("Digite a coordenada do assento " + (i + 1) + ": ");
-                String cadeira = scanner.nextLine().trim().toUpperCase();
-                assentoEscolhido = sala.buscarAssento(cadeira);
-
-                if (assentoEscolhido == null) {
-                    System.out.println("Assento inválido. Tente novamente.");
-                } else if (assentoEscolhido.isOcupado()) {
-                    System.out.println("Assento já está ocupado. Escolha outro.");
+    @Override
+    protected void tratarOpcao(int opcao) {
+        switch (opcao) {
+            case 1:
+                comprarIngresso();
+                break;
+            case 2:
+                menuFilme.mostrarFilmesEmCartaz();
+                break;
+            case 3:
+                exibirMeusIngressos();
+                break;
+            case 0:
+                if (clienteLogado == null) {
+                    System.out.println("Erro: Nenhum cliente está logado.");
                 } else {
-                    break;
+                    System.out.println("Logout realizado com sucesso.");
                 }
+                break;
+            default:
+                System.out.println("Opção inválida.");
+                break;
+        }
+    }
+
+    private void comprarIngresso() {
+        try {
+            menuFilme.mostrarFilmesEmCartaz();
+
+            System.out.print("Digite o nome do filme para escolher a sessão: ");
+            String nomeFilme = scanner.nextLine();
+
+            var sessoes = sessaoService.buscarSessoesPorFilme(nomeFilme);
+            if (sessoes.isEmpty()) {
+                System.out.println("Nenhuma sessão encontrada para esse filme.");
+                return;
             }
 
-            System.out.println("Tipos de ingresso disponíveis:");
-            for (TipoIngresso tipo : TipoIngresso.values()) {
-                System.out.printf("%d - %s%n", tipo.ordinal() + 1, tipo);
+            System.out.println("Selecione a sessão:");
+            for (int i = 0; i < sessoes.size(); i++) {
+                Sessao s = sessoes.get(i);
+                System.out.printf("%d - Sala %d - Data: %s%n", i + 1, s.getSala().getNumeroSala(), s.getDataHora());
             }
 
-            int tipo;
-            while (true) {
-                System.out.print("Digite o tipo de ingresso desejado: ");
-                try {
-                    tipo = Integer.parseInt(scanner.nextLine());
-                    if (tipo < 1 || tipo > TipoIngresso.values().length) {
-                        System.out.println("Tipo de ingresso inválido. Tente novamente.");
+            int opcaoSessao = lerOpcao(scanner);
+            if (opcaoSessao < 1 || opcaoSessao > sessoes.size()) {
+                System.out.println("Opção inválida.");
+                return;
+            }
+
+            Sessao sessaoEscolhida = sessoes.get(opcaoSessao - 1);
+            Sala sala = sessaoEscolhida.getSala();
+
+            exibirMapaAssentos(sala);
+
+            System.out.print("Quantos ingressos deseja comprar? ");
+            int quantidade = Integer.parseInt(scanner.nextLine());
+
+            for (int i = 0; i < quantidade; i++) {
+                Assento assentoEscolhido = null;
+                while (true) {
+                    System.out.print("Digite a coordenada do assento " + (i + 1) + ": ");
+                    String cadeira = scanner.nextLine().trim().toUpperCase();
+                    assentoEscolhido = sala.buscarAssento(cadeira);
+
+                    if (assentoEscolhido == null) {
+                        System.out.println("Assento inválido. Tente novamente.");
+                    } else if (assentoEscolhido.isOcupado()) {
+                        System.out.println("Assento já está ocupado. Escolha outro.");
                     } else {
                         break;
                     }
-                } catch (NumberFormatException e) {
-                    System.out.println("Entrada inválida. Digite um número.");
                 }
+
+                System.out.println("Tipos de ingresso disponíveis:");
+                for (TipoIngresso tipo : TipoIngresso.values()) {
+                    System.out.printf("%d - %s%n", tipo.ordinal() + 1, tipo);
+                }
+
+                int tipo;
+                while (true) {
+                    System.out.print("Digite o tipo de ingresso desejado: ");
+                    try {
+                        tipo = Integer.parseInt(scanner.nextLine());
+                        if (tipo < 1 || tipo > TipoIngresso.values().length) {
+                            System.out.println("Tipo de ingresso inválido. Tente novamente.");
+                        } else {
+                            break;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Entrada inválida. Digite um número.");
+                    }
+                }
+
+                Ingresso ingresso = ingressoService.comprarIngresso(
+                    clienteLogado,
+                    sessaoEscolhida,
+                    assentoEscolhido,
+                    TipoIngresso.values()[tipo - 1],
+                    10
+                );
+
+                clienteLogado.adicionarIngresso(ingresso);
+                System.out.println("Ingresso para o assento " + assentoEscolhido.getCoordenada() + " comprado com sucesso!");
             }
 
-            Ingresso ingresso = ingressoService.comprarIngresso(
-                clienteLogado,
-                sessaoEscolhida,
-                assentoEscolhido,
-                TipoIngresso.values()[tipo - 1],
-                10
-            );
-
-            clienteLogado.adicionarIngresso(ingresso);
-            System.out.println("Ingresso para o assento " + assentoEscolhido.getCoordenada() + " comprado com sucesso!");
+        } catch (CampoInvalido e) {
+            System.out.println("Erro na compra: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Entrada numérica inválida.");
+        } catch (Exception e) {
+            System.out.println("Erro inesperado: " + e.getMessage());
         }
-
-    } catch (CampoInvalido e) {
-        System.out.println("Erro na compra: " + e.getMessage());
-    } catch (NumberFormatException e) {
-        System.out.println("Entrada numérica inválida.");
-    } catch (Exception e) {
-        System.out.println("Erro inesperado: " + e.getMessage());
     }
-}
-
 
     private void exibirMeusIngressos() {
-
         List<Ingresso> ingressos = clienteLogado.getIngressos();
 
         if (ingressos == null || ingressos.isEmpty()) {
@@ -159,7 +162,7 @@ private void comprarIngresso() {
         }
 
         System.out.println("==== Ingressos do Cliente ====");
-        for (Ingresso ingresso : clienteLogado.getIngressos()) {
+        for (Ingresso ingresso : ingressos) {
             System.out.println("-------------------------");
             System.out.println("Filme: " + ingresso.getSessao().getFilme().getNome());
             System.out.println("Data: " + ingresso.getSessao().getDataHora());

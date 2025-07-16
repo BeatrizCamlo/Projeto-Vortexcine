@@ -1,16 +1,15 @@
 package views;
 
-import java.util.Scanner;
-
+import abstracts.MenuBase;
 import data.DataSeeder;
 import entities.Cliente;
 import entities.Funcionario;
 import exceptions.CampoInvalido;
-import services.*;
 import repositories.*;
+import services.*;
 
-public class PainelControle {
-    private final Scanner scanner = new Scanner(System.in);
+public class PainelControle extends MenuBase {
+
     private final ClienteService clienteService = new ClienteService(new RepositorioClientes());
     private final FuncionarioService funcionarioService = new FuncionarioService(new RepositorioFuncionarios());
     private final FilmeService filmeService = new FilmeService(new RepositorioFilmes());
@@ -34,30 +33,27 @@ public class PainelControle {
     public void iniciarSistema() {
         mostrarRecepcao();
         seeder.carregarDados();
-        loginTipoUsuario();
+        iniciar(); 
     }
 
-    private void loginTipoUsuario() {
-        while (true) {
-            System.out.println("\n======== Faça Login ========");
-            System.out.println("1 - Entrar como Cliente");
-            System.out.println("2 - Cadastrar-se como Cliente");
-            System.out.println("3 - Entrar como Funcionário");
-            System.out.println("0 - Sair");
-            System.out.print("Escolha uma opção: ");
-            String entrada = scanner.nextLine();
-            int opcao = entrada.matches("\\d+") ? Integer.parseInt(entrada) : -1;
+    @Override
+    public void exibirMenu() {
+        System.out.println("\n======== Faça Login ========");
+        System.out.println("1 - Entrar como Cliente");
+        System.out.println("2 - Cadastrar-se como Cliente");
+        System.out.println("3 - Entrar como Funcionário");
+        System.out.println("0 - Sair");
+        System.out.print("Escolha uma opção: ");
+    }
 
-            switch (opcao) {
-                case 1: loginCliente(); break;
-                case 2: cadastrarNovoCliente(); break;
-                case 3: loginFuncionario(); break;
-                case 0: {
-                    System.out.println("Encerrando o sistema.");
-                    return;
-                }
-                default: System.out.println("Opção inválida."); break;
-            }
+    @Override
+    protected void tratarOpcao(int opcao) {
+        switch (opcao) {
+            case 1 -> loginCliente();
+            case 2 -> cadastrarNovoCliente();
+            case 3 -> loginFuncionario();
+            case 0 -> System.out.println("Encerrando o sistema.");
+            default -> System.out.println("Opção inválida.");
         }
     }
 
@@ -80,55 +76,66 @@ public class PainelControle {
     }
 
     private void loginCliente() {
-    System.out.print("Email: ");
-    String email = scanner.nextLine();
-    System.out.print("Senha: ");
-    String senha = scanner.nextLine();
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+        System.out.print("Senha: ");
+        String senha = scanner.nextLine();
 
-    try {
-        Cliente clienteLogado = clienteService.autenticar(email, senha);
-        if (clienteLogado != null) {
-            System.out.println("Login realizado com sucesso!");
-            MenuCliente menuCliente = new MenuCliente(
-                scanner,
-                clienteLogado,
-                clienteService,
-                filmeService,
-                sessaoService,
-                salaService,
-                ingressoService,
-                new MenuFilme(clienteLogado, scanner, filmeService)
-            );
-            menuCliente.exibirMenu();
-        } else {
-            System.out.println("Credenciais inválidas. Tente novamente.");
+        try {
+            Cliente clienteLogado = clienteService.autenticar(email, senha);
+            if (clienteLogado != null) {
+                System.out.println("Login realizado com sucesso!");
+
+                MenuFilme menuFilme = new MenuFilme(clienteLogado, scanner, filmeService);
+
+                MenuCliente menuCliente = new MenuCliente(
+                    clienteLogado,
+                    clienteService,
+                    filmeService,
+                    sessaoService,
+                    salaService,
+                    ingressoService,
+                    menuFilme
+                );
+
+                menuCliente.iniciar();
+
+            } else {
+                System.out.println("Credenciais inválidas. Tente novamente.");
+            }
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
         }
-    } catch (CampoInvalido e) {
-        System.out.println("Erro: " + e.getMessage());
     }
-}
 
     private void loginFuncionario() {
-    System.out.print("Email: ");
-    String email = scanner.nextLine();
-    System.out.print("Senha: ");
-    String senha = scanner.nextLine();
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+        System.out.print("Senha: ");
+        String senha = scanner.nextLine();
 
-    try {
-        Funcionario funcionarioLogado = funcionarioService.autenticar(email, senha);
-        System.out.println("Login realizado com sucesso!");
-        MenuFuncionario menuFuncionario = new MenuFuncionario(
-            scanner,
-            funcionarioLogado,
-            filmeService,
-            funcionarioService,
-            clienteService,
-            salaService,
-            sessaoService
-        );
-        menuFuncionario.exibirMenu();
-    } catch (CampoInvalido e) {
-        System.out.println("Erro: " + e.getMessage()); 
-    }
+        try {
+            Funcionario funcionarioLogado = funcionarioService.autenticar(email, senha);
+            if (funcionarioLogado != null) {
+                System.out.println("Login realizado com sucesso!");
+
+                MenuFuncionario menuFuncionario = new MenuFuncionario(
+                    scanner,
+                    funcionarioLogado,
+                    filmeService,
+                    funcionarioService,
+                    clienteService,
+                    salaService,
+                    sessaoService
+                );
+
+                menuFuncionario.iniciar();
+
+            } else {
+                System.out.println("Credenciais inválidas. Tente novamente.");
+            }
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
     }
 }
