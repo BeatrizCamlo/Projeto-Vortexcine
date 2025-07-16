@@ -28,19 +28,23 @@ public class RepositorioFilmes {
         return null;
     }
 
+    public void atualizarNome(Filme filme, String novoNome) {
+        filme.setNome(novoNome);
+    }
+
+    public void atualizarDuracao(Filme filme, int duracao) {
+        filme.setDuracaoEmMinutos(duracao);
+    }
+
+    public void atualizarGenero(Filme filme, GeneroFilme genero) {
+        filme.setGenero(genero);
+    }
+
     public List<Filme> obterTodos() {
         return new ArrayList<>(filmes);
     }
 
     public boolean contem(Filme filme) {
         return filmes.contains(filme);
-    }
-
-    public void popularFilmesIniciais() {
-        adicionar(new Filme("Matrix", 136, GeneroFilme.ACAO));
-        adicionar(new Filme("O Poderoso Chefão", 175, GeneroFilme.DRAMA));
-        adicionar(new Filme("Toy Story", 81, GeneroFilme.ANIMACAO));
-        adicionar(new Filme("Titanic", 195, GeneroFilme.ROMANCE));
-        adicionar(new Filme("Vingadores: Ultimato", 181, GeneroFilme.ACAO));
     }
 }

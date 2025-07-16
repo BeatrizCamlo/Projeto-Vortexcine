@@ -51,7 +51,7 @@ public class FilmeService {
         if (repositorio.obterPorNome(novoNome) != null) {
             throw new CampoInvalido("Nome de filme já existe.");
         }
-        filme.setNome(novoNome);
+        repositorio.atualizarNome(filme, novoNome);
     }
 
     public void modificarDuracao(Funcionario funcionario, Filme filme, int duracao) {
@@ -62,7 +62,7 @@ public class FilmeService {
         if (!repositorio.contem(filme)) {
             throw new CampoInvalido("Filme não encontrado.");
         }
-        filme.setDuracaoEmMinutos(duracao);
+        repositorio.atualizarDuracao(filme, duracao);
     }
 
     public void modificarGenero(Funcionario funcionario, Filme filme, GeneroFilme genero) {
@@ -73,7 +73,7 @@ public class FilmeService {
         if (!repositorio.contem(filme)) {
             throw new CampoInvalido("Filme não encontrado.");
         }
-        filme.setGenero(genero);
+        repositorio.atualizarGenero(filme, genero);
     }
 
     private void verificarGerente(Funcionario funcionario) {
