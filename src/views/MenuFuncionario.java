@@ -8,11 +8,9 @@ import services.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Scanner;
 
 public class MenuFuncionario extends MenuBase {
-    private final Scanner scanner;
-    private Funcionario funcionarioLogado;
+    private final Funcionario funcionarioLogado;
     private final FilmeService filmeService;
     private final FuncionarioService funcionarioService;
     private final ClienteService clienteService;
@@ -21,7 +19,6 @@ public class MenuFuncionario extends MenuBase {
     private final MenuFilme menuFilme;
 
     public MenuFuncionario(
-        Scanner scanner,
         Funcionario funcionarioLogado,
         FilmeService filmeService,
         FuncionarioService funcionarioService,
@@ -29,20 +26,17 @@ public class MenuFuncionario extends MenuBase {
         SalaService salaService,
         SessaoService sessaoService
     ) {
-        this.scanner = scanner;
         this.funcionarioLogado = funcionarioLogado;
         this.filmeService = filmeService;
         this.funcionarioService = funcionarioService;
         this.clienteService = clienteService;
         this.salaService = salaService;
         this.sessaoService = sessaoService;
-        menuFilme = new MenuFilme(funcionarioLogado, scanner, filmeService);
+        this.menuFilme = new MenuFilme(funcionarioLogado, scanner, filmeService);
     }
 
-   @Override
+    @Override
     public void exibirMenu() {
-    int opcao;
-    do {
         exibirCabecalho("Menu Funcionário");
         System.out.println("1. Gerenciar Filmes");
         if (funcionarioLogado.ehGerente()) {
@@ -54,18 +48,12 @@ public class MenuFuncionario extends MenuBase {
         System.out.println("6. Exibir todas as Sessões");
         System.out.println("0. Logout");
         System.out.print("Opção: ");
-
-        opcao = lerOpcao(scanner);
-        tratarOpcao(opcao);
-
-    } while (opcao != 0);
-}
-
+    }
 
     @Override
     protected void tratarOpcao(int opcao) {
         switch (opcao) {
-            case 1 -> gerenciarFilmes(); // futuramente você pode extrair isso
+            case 1 -> gerenciarFilmes();
             case 2 -> {
                 if (funcionarioLogado.ehGerente()) gerenciarClientes();
                 else System.out.println("Acesso negado.");
@@ -82,12 +70,11 @@ public class MenuFuncionario extends MenuBase {
         }
     }
 
-    // ---------------- MÉTODOS DE GERENCIAMENTO ----------------
+    // ---------------- MÉTODOS ----------------
 
-   private void gerenciarFilmes() {
-        menuFilme.exibirMenu();
+    private void gerenciarFilmes() {
+        menuFilme.iniciar(); // assume que MenuFilme tem seu próprio loop
     }
-
 
     // GERENCIAR CLIENTES
     private void gerenciarClientes() {
@@ -99,7 +86,7 @@ public class MenuFuncionario extends MenuBase {
             System.out.println("3. Remover cliente");
             System.out.println("0. Voltar");
             System.out.print("Opção: ");
-            opcao = lerOpcao(scanner);
+            opcao = obterEntradaUsuario();
 
             switch (opcao) {
                 case 1 -> listarClientes();
@@ -111,19 +98,17 @@ public class MenuFuncionario extends MenuBase {
         } while (opcao != 0);
     }
 
-        private void listarClientes() {
-    try {
-        var clientes = clienteService.obterTodosClientes();
-        if (clientes.isEmpty()) {
-            System.out.println("Nenhum cliente cadastrado.");
-            return;
+    private void listarClientes() {
+        try {
+            var clientes = clienteService.obterTodosClientes();
+            if (clientes.isEmpty()) {
+                System.out.println("Nenhum cliente cadastrado.");
+                return;
+            }
+            clientes.forEach(Cliente::exibirInformacoes);
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
         }
-        clientes.forEach(Cliente::exibirInformacoes);
-    } catch (CampoInvalido e) {
-        System.out.println("Erro: " + e.getMessage());
-    }
-
-
     }
 
     private void editarCliente() {
@@ -174,7 +159,7 @@ public class MenuFuncionario extends MenuBase {
             System.out.println("4. Remover");
             System.out.println("0. Voltar");
             System.out.print("Opção: ");
-            opcao = lerOpcao(scanner);
+            opcao = obterEntradaUsuario();
 
             switch (opcao) {
                 case 1 -> listarFuncionarios();
@@ -188,7 +173,7 @@ public class MenuFuncionario extends MenuBase {
     }
 
     private void listarFuncionarios() {
-        var funcionarios = funcionarioService.obterTodosClientes(); 
+        var funcionarios = funcionarioService.obterTodosClientes();
         if (funcionarios.isEmpty()) {
             System.out.println("Nenhum funcionário cadastrado.");
             return;
@@ -228,23 +213,22 @@ public class MenuFuncionario extends MenuBase {
     }
 
     private void removerFuncionario() {
-    System.out.print("Email do funcionário: ");
-    String email = scanner.nextLine();
+        System.out.print("Email do funcionário: ");
+        String email = scanner.nextLine();
 
-    try {
-        if (email.equalsIgnoreCase(funcionarioLogado.getEmail())) {
-            System.out.println("Erro: você não pode se remover enquanto estiver logado.");
-            return;
-        }
+        try {
+            if (email.equalsIgnoreCase(funcionarioLogado.getEmail())) {
+                System.out.println("Erro: você não pode se remover enquanto estiver logado.");
+                return;
+            }
 
-        Funcionario funcionario = funcionarioService.buscarPorEmail(email);
-        funcionarioService.removerFuncionario(funcionario);
-        System.out.println("Funcionário removido com sucesso.");
+            Funcionario funcionario = funcionarioService.buscarPorEmail(email);
+            funcionarioService.removerFuncionario(funcionario);
+            System.out.println("Funcionário removido com sucesso.");
         } catch (CampoInvalido e) {
             System.out.println("Erro: " + e.getMessage());
         }
-    }   
-
+    }
 
     private void editarFuncionarios() {
         System.out.print("Email do funcionário: ");
@@ -278,7 +262,7 @@ public class MenuFuncionario extends MenuBase {
         }
     }
 
-    // ---------------- SALA ----------------
+    // CRIAR SALA
     private void criarSala() {
         exibirCabecalho("Criar Sala");
         try {
@@ -294,48 +278,47 @@ public class MenuFuncionario extends MenuBase {
         }
     }
 
-    // ---------------- SESSÃO ----------------
-   private void criarSessao() {
-    exibirCabecalho("Criar Sessão");
-    try {
-        System.out.print("Nome do filme: ");
-        String nomeFilme = scanner.nextLine();
-        Filme filme = filmeService.obterPorNome(nomeFilme);
-        if (filme == null) {
-            System.out.println("Filme não encontrado.");
-            return;
-        }
-
-        System.out.print("Número da sala: ");
-        int numeroSala = Integer.parseInt(scanner.nextLine());
-        Sala sala = salaService.buscarSalaPorNumero(numeroSala);
-        if (sala == null) {
-            System.out.println("Sala não encontrada.");
-            return;
-        }
-
-        // Aqui entra o seu trecho com DateTimeFormatter e tratamento da exceção
-        System.out.print("Data e hora da sessão (dd/MM/yyyy HH:mm): ");
-        String dataHoraStr = scanner.nextLine();
-
+    // CRIAR SESSÃO
+    private void criarSessao() {
+        exibirCabecalho("Criar Sessão");
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            LocalDateTime dataHora = LocalDateTime.parse(dataHoraStr, formatter);
+            System.out.print("Nome do filme: ");
+            String nomeFilme = scanner.nextLine();
+            Filme filme = filmeService.obterPorNome(nomeFilme);
+            if (filme == null) {
+                System.out.println("Filme não encontrado.");
+                return;
+            }
 
-            Sessao novaSessao = new Sessao(filme, sala, dataHora);
-            salaService.associarSessaoASala(sala, novaSessao);
-            sessaoService.criarSessao(novaSessao);
-            System.out.println("Sessão criada com sucesso.");
-        } catch (DateTimeParseException e) {
-            System.out.println("Formato de data/hora inválido. Use: dd/MM/yyyy HH:mm (ex: 12/12/2012 14:20)");
+            System.out.print("Número da sala: ");
+            int numeroSala = Integer.parseInt(scanner.nextLine());
+            Sala sala = salaService.buscarSalaPorNumero(numeroSala);
+            if (sala == null) {
+                System.out.println("Sala não encontrada.");
+                return;
+            }
+
+            System.out.print("Data e hora da sessão (dd/MM/yyyy HH:mm): ");
+            String dataHoraStr = scanner.nextLine();
+
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                LocalDateTime dataHora = LocalDateTime.parse(dataHoraStr, formatter);
+
+                Sessao novaSessao = new Sessao(filme, sala, dataHora);
+                salaService.associarSessaoASala(sala, novaSessao);
+                sessaoService.criarSessao(novaSessao);
+                System.out.println("Sessão criada com sucesso.");
+            } catch (DateTimeParseException e) {
+                System.out.println("Formato de data/hora inválido. Use: dd/MM/yyyy HH:mm (ex: 12/12/2012 14:20)");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: número inválido.");
+        } catch (CampoInvalido e) {
+            System.out.println("Erro: " + e.getMessage());
         }
-
-    } catch (NumberFormatException e) {
-        System.out.println("Erro: número inválido.");
-    } catch (CampoInvalido e) {
-        System.out.println("Erro: " + e.getMessage());
     }
-}
+
     private void visualizarSessoes() {
         exibirCabecalho("Sessões Cadastradas");
         try {

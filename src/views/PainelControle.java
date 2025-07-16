@@ -33,7 +33,7 @@ public class PainelControle extends MenuBase {
     public void iniciarSistema() {
         mostrarRecepcao();
         seeder.carregarDados();
-        iniciar(); 
+        iniciar();  // método do MenuBase que faz o loop principal
     }
 
     @Override
@@ -120,14 +120,12 @@ public class PainelControle extends MenuBase {
                 System.out.println("Login realizado com sucesso!");
 
                 MenuFuncionario menuFuncionario = new MenuFuncionario(
-                    scanner,
                     funcionarioLogado,
                     filmeService,
                     funcionarioService,
                     clienteService,
                     salaService,
-                    sessaoService
-                );
+                    sessaoService                );
 
                 menuFuncionario.iniciar();
 
