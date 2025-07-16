@@ -88,39 +88,43 @@ private void comprarIngresso() {
 
         exibirMapaAssentos(sala);
 
-        System.out.print("Digite as coordenadas dos assentos separadas por vírgula (ex: A1,B2,C3): ");
-        String entrada = scanner.nextLine().toUpperCase();
-        String[] cadeiras = entrada.split(",");
+        System.out.print("Quantos ingressos deseja comprar? ");
+        int quantidade = Integer.parseInt(scanner.nextLine());
 
-        for (String cadeira : cadeiras) {
-            cadeira = cadeira.trim();
-            Assento assentoEscolhido = sala.buscarAssento(cadeira);
+        for (int i = 0; i < quantidade; i++) {
+            Assento assentoEscolhido = null;
+            while (true) {
+                System.out.print("Digite a coordenada do assento " + (i + 1) + ": ");
+                String cadeira = scanner.nextLine().trim().toUpperCase();
+                assentoEscolhido = sala.buscarAssento(cadeira);
 
-            if (assentoEscolhido == null) {
-                System.out.println("Assento " + cadeira + " inválido. Pulando...");
-                continue;
+                if (assentoEscolhido == null) {
+                    System.out.println("Assento inválido. Tente novamente.");
+                } else if (assentoEscolhido.isOcupado()) {
+                    System.out.println("Assento já está ocupado. Escolha outro.");
+                } else {
+                    break;
+                }
             }
-            if (assentoEscolhido.isOcupado()) {
-                System.out.println("Assento " + cadeira + " já está ocupado. Pulando...");
-                continue;
-            }
 
-            System.out.println("Tipos de ingresso disponíveis para o assento " + cadeira + ":");
+            System.out.println("Tipos de ingresso disponíveis:");
             for (TipoIngresso tipo : TipoIngresso.values()) {
                 System.out.printf("%d - %s%n", tipo.ordinal() + 1, tipo);
             }
 
-            System.out.print("Digite o tipo de ingresso desejado: ");
             int tipo;
-            try {
-                tipo = Integer.parseInt(scanner.nextLine());
-                if (tipo < 1 || tipo > TipoIngresso.values().length) {
-                    System.out.println("Tipo de ingresso inválido para o assento " + cadeira + ". Pulando...");
-                    continue;
+            while (true) {
+                System.out.print("Digite o tipo de ingresso desejado: ");
+                try {
+                    tipo = Integer.parseInt(scanner.nextLine());
+                    if (tipo < 1 || tipo > TipoIngresso.values().length) {
+                        System.out.println("Tipo de ingresso inválido. Tente novamente.");
+                    } else {
+                        break;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Entrada inválida. Digite um número.");
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida para o assento " + cadeira + ". Pulando...");
-                continue;
             }
 
             Ingresso ingresso = ingressoService.comprarIngresso(
@@ -128,11 +132,11 @@ private void comprarIngresso() {
                 sessaoEscolhida,
                 assentoEscolhido,
                 TipoIngresso.values()[tipo - 1],
-                10 
+                10
             );
 
             clienteLogado.adicionarIngresso(ingresso);
-            System.out.println("Ingresso para o assento " + cadeira + " comprado com sucesso!");
+            System.out.println("Ingresso para o assento " + assentoEscolhido.getCoordenada() + " comprado com sucesso!");
         }
 
     } catch (CampoInvalido e) {
@@ -143,7 +147,6 @@ private void comprarIngresso() {
         System.out.println("Erro inesperado: " + e.getMessage());
     }
 }
-
 
 
     private void exibirMeusIngressos() {
